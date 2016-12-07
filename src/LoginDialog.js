@@ -24,13 +24,15 @@ class LoginDialog extends Component {
     }
 
     onLogin = (event) => {
-        if (this.props.onLogin) {
-            this.props.onLogin(this.state.loginData);
+        localStorage.profile = this.state.loginData;
+        if (location.state && location.state.nextPathname) {
+            this.props.router.replace(location.state.nextPathname)
+        } else {
+            this.props.router.replace('/')
         }
     }
 
     render() {
-
         return (
             <Modal.Dialog>
                 <Modal.Header>

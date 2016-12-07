@@ -1,19 +1,12 @@
 import React, {Component} from 'react';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
 
+
 class NavBar extends Component {
     constructor(props) {
         super(props);
 
         this.state = {};
-    }
-
-    onChangePage = (page) => {
-        return (event) => {
-            if (this.props.onChangePage) {
-                this.props.onChangePage(page);
-            }
-        }
     }
 
     render() {
@@ -28,12 +21,12 @@ class NavBar extends Component {
                     </Navbar.Brand>
                     <Navbar.Toggle/>
                 </Navbar.Header>
-                {this.props.profile
+                {localStorage.profile
                     ? <Nav>
-                            <NavItem eventKey={1} href="#" onClick={this.onChangePage('Home')}>Home</NavItem>
-                            <NavItem eventKey={2} href="#" onClick={this.onChangePage('Courses')}>Courses management</NavItem>
-                            <NavItem eventKey={3} href="#" onClick={this.onChangePage('Students')}>Students management</NavItem>
-                            <NavItem eventKey={4} href="#" onClick={this.onChangePage('Teachers')}>Teachers management</NavItem>
+                            <NavItem eventKey={1} href={this.props.router.createHref('/')}>Home</NavItem>
+                            <NavItem eventKey={2} href={this.props.router.createHref('/courses')}>Courses management</NavItem>
+                            <NavItem eventKey={3} href={this.props.router.createHref('/')}>Students management</NavItem>
+                            <NavItem eventKey={4} href={this.props.router.createHref('/')}>>Teachers management</NavItem>
                         </Nav>
                     : <Navbar.Collapse>
 
