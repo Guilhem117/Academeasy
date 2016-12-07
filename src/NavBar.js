@@ -24,7 +24,7 @@ class NavBar extends Component {
                     <Navbar.Brand>
                         <img style={{
                             padding: '0px'
-                        }} src="/logo.png"/>
+                        }} src="/logo.png" role="presentation"/>
                     </Navbar.Brand>
                     <Navbar.Toggle/>
                 </Navbar.Header>

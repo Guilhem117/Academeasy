@@ -58,12 +58,18 @@ class LoginDialog extends Component {
                                 <FormControl type="password" placeholder="Password"/>
                             </Col>
                         </FormGroup>
+                        <FormGroup>
+                            <Col smOffset={2} sm={10}>
+                                <Checkbox>Remember me</Checkbox>
+                            </Col>
+                        </FormGroup>
                     </Form>
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button onClick={this.onLogin}>Sign in</Button>
-
+                    <FormGroup>
+                        <Button onClick={this.onLogin}>Sign in</Button>
+                    </FormGroup>
                 </Modal.Footer>
 
             </Modal.Dialog>

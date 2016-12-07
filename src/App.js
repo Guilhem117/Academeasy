@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './App.css';
+
 import LoginDialog from './LoginDialog';
 import NavBar from './NavBar';
 import MainPage from './MainPage';
