@@ -1,18 +1,70 @@
 import React, {Component} from 'react';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
 
-
 class NavBar extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            studentNavigation: [
+                'home', 'courses', 'profile'
+            ],
+            teacherNavigation: [
+                'home', 'courses', 'profile'
+            ],
+            adminNavigation: [
+                'home', 'courses', 'students', 'teachers'
+            ],
+
+            pagesNames: {
+                home: 'Home',
+                courses: 'Courses',
+                students: 'Students',
+                teachers: 'Teachers',
+                profile: 'Profile'
+            }
+        };
+    }
+
+    getNavigation = (pages) => {
+        return (
+            <Nav>
+                {pages.map((page, index) =>
+                  <NavItem eventKey={index + 1} key={page}
+                    href={
+                        this.props.router.createHref(page)
+                    }> {this.state.pagesNames[page]}
+                  </NavItem>
+                )}
+            </Nav>
+        );
     }
 
     render() {
+        let navigation;
+        if (localStorage.profile) {
+            switch (localStorage.userType) {
+                case 'admin':
+                    navigation = this.getNavigation(this.state.adminNavigation);
+                    break;
+                case 'teacher':
+                    navigation = this.getNavigation(this.state.teacherNavigation);
+                    break;
+                case 'student':
+                    navigation = this.getNavigation(this.state.studentNavigation);
+                    break;
+                default:
+                    navigation = <div/>
+            }
+        } else {
+            navigation = <Navbar.Collapse>
+                <Navbar.Text pullRight>
+                    AcademEasy
+                </Navbar.Text>
+            </Navbar.Collapse>
+        }
         return (
             <Navbar>
-
                 <Navbar.Header>
                     <Navbar.Brand>
                         <img style={{
@@ -21,20 +73,7 @@ class NavBar extends Component {
                     </Navbar.Brand>
                     <Navbar.Toggle/>
                 </Navbar.Header>
-                {localStorage.profile
-                    ? <Nav>
-                            <NavItem eventKey={1} href={this.props.router.createHref('/')}>Home</NavItem>
-                            <NavItem eventKey={2} href={this.props.router.createHref('/courses')}>Courses management</NavItem>
-                            <NavItem eventKey={3} href={this.props.router.createHref('/')}>Students management</NavItem>
-                            <NavItem eventKey={4} href={this.props.router.createHref('/')}>>Teachers management</NavItem>
-                        </Nav>
-                    : <Navbar.Collapse>
-
-                        <Navbar.Text pullRight>
-                            AcademEasy
-                        </Navbar.Text>
-                    </Navbar.Collapse>
-}
+                {navigation}
             </Navbar>
 
         );

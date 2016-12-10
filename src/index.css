@@ -4,6 +4,6 @@ body {
     font-family: sans-serif;
     background-image: url(/students.jpg);
     background-attachment: fixed;
-    background-position: center;
+    background-position: 40;
     background-repeat: no-repeat;
 }

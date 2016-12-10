@@ -9,7 +9,7 @@ import {
     ControlLabel,
     Modal
 } from 'react-bootstrap';
-import './LoginDialog.css'
+import './LoginDialog.css';
 
 class LoginDialog extends Component {
     constructor(props) {
@@ -25,14 +25,17 @@ class LoginDialog extends Component {
 
     onLogin = (event) => {
         localStorage.profile = this.state.loginData;
+        localStorage.userType = 'admin';
         if (location.state && location.state.nextPathname) {
-            this.props.router.replace(location.state.nextPathname)
+            location.replace(location.state.nextPathname);
         } else {
-            this.props.router.replace('/')
+            location.replace('/');
         }
     }
 
     render() {
+      console.log(location);
+
         return (
             <Modal.Dialog>
                 <Modal.Header>
@@ -67,11 +70,8 @@ class LoginDialog extends Component {
                         </FormGroup>
                     </Form>
                 </Modal.Body>
-
                 <Modal.Footer>
-                    <FormGroup>
                         <Button onClick={this.onLogin}>Sign in</Button>
-                    </FormGroup>
                 </Modal.Footer>
 
             </Modal.Dialog>
