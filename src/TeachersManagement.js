@@ -45,8 +45,23 @@ class TeachersManagement extends Component {
         };
     }
 
+    updateTeacher = (teacher) => {
+        this.setState((prevState, props) => {
+            let index = prevState.teachers.findIndex(s => s.id === teacher.id);
+            if (index > -1) {
+                prevState.teachers[index] = teacher;
+                return {teachers: prevState.teachers};
+            }
+        });
+    }
+
+    sendPassword = (student) => {
+      console.log('Send password to ', student.email);
+    }
+
+
     detailsComponent = (teacher) => {
-      return (<TeacherDetails courses={this.state.courses} teacher={teacher} onChange={this.updateTeacher}/>);
+      return (<TeacherDetails courses={this.state.courses} teacher={teacher} onChange={this.updateTeacher} onSendPassword={this.sendPassword}/>);
     }
 
     render() {

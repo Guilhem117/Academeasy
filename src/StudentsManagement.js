@@ -58,47 +58,50 @@ class StudentsManagement extends Component {
         });
     }
 
+    sendPassword = (student) => {
+      console.log('Send password to ', student.email);
+    }
+
     detailsComponent = (student) => {
-        return (<StudentDetails courses={this.state.courses} student={student} onChange={this.updateStudent}/>);
+        return (<StudentDetails courses={this.state.courses} student={student} onChange={this.updateStudent} onSendPassword={this.sendPassword}/>);
     }
 
     render() {
-
         return (
             <Grid className="table-background">
                 <Panel header="Students list">
-                  <Row>
-                    <BootstrapTable data={this.state.students} options={{
-                        expandRowBgColor: 'rgb(242, 255, 163)'
-                    }} insertRow expandableRow={(row) => true} expandComponent={this.detailsComponent} search striped hover>
-                        <TableHeaderColumn dataField='id' isKey autoValue>#</TableHeaderColumn>
-                        <TableHeaderColumn dataField='login' editable={{
-                            type: 'textarea'
-                        }}>Login</TableHeaderColumn>
-                        <TableHeaderColumn dataField='firstName' editable={{
-                            type: 'textarea'
-                        }}>First Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField='lastName' editable={{
-                            type: 'textarea'
-                        }}>Last Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField='email' editable={{
-                            type: 'textarea'
-                        }}>Email</TableHeaderColumn>
-                        <TableHeaderColumn dataField='year' filter={{
-                            type: 'SelectFilter',
-                            options: {
-                                'M1': 'M1',
-                                'M2': 'M2'
-                            }
-                        }} editable={{
-                            type: 'select',
-                            options: {
-                                values: ['M1', 'M2']
-                            }
-                        }}>
-                            Year
-                        </TableHeaderColumn>
-                    </BootstrapTable>
+                    <Row>
+                        <BootstrapTable data={this.state.students} options={{
+                            expandRowBgColor: 'rgb(242, 255, 163)',
+                        }} insertRow expandableRow={(row) => true} expandComponent={this.detailsComponent} search striped hover>
+                            <TableHeaderColumn dataField='id' isKey autoValue>#</TableHeaderColumn>
+                            <TableHeaderColumn dataField='login' editable={{
+                                type: 'textarea'
+                            }}>Login</TableHeaderColumn>
+                            <TableHeaderColumn dataField='firstName' editable={{
+                                type: 'textarea'
+                            }}>First Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField='lastName' editable={{
+                                type: 'textarea'
+                            }}>Last Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField='email' editable={{
+                                type: 'textarea'
+                            }}>Email</TableHeaderColumn>
+                            <TableHeaderColumn dataField='year' filter={{
+                                type: 'SelectFilter',
+                                options: {
+                                    'M1': 'M1',
+                                    'M2': 'M2'
+                                }
+                            }} editable={{
+                                type: 'select',
+                                options: {
+                                    values: ['M1', 'M2']
+                                }
+                            }}>
+                                Year
+                            </TableHeaderColumn>
+                        </BootstrapTable>
                     </Row>
                 </Panel>
             </Grid>

@@ -13,7 +13,7 @@ import TeachersManagement from './TeachersManagement';
 
 import App from './App';
 
-import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
+import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import 'react-select/dist/react-select.css';
 
 import './index.css';
