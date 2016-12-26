@@ -13,7 +13,7 @@ class NavBar extends Component {
                 'home', 'courses', 'profile'
             ],
             adminNavigation: [
-                'home', 'courses', 'students', 'teachers'
+                'home', 'courses', 'students', 'teachers', 'calendar'
             ],
 
             pagesNames: {
@@ -21,7 +21,8 @@ class NavBar extends Component {
                 courses: 'Courses',
                 students: 'Students',
                 teachers: 'Teachers',
-                profile: 'Profile'
+                profile: 'Profile',
+                calendar: 'Calendar'
             }
         };
     }
@@ -29,39 +30,33 @@ class NavBar extends Component {
     getNavigation = (pages) => {
         return (
             <Nav>
-                {pages.map((page, index) =>
-                  <NavItem eventKey={index + 1} key={page}
-                    href={
-                        this.props.router.createHref(page)
-                    }> {this.state.pagesNames[page]}
-                  </NavItem>
-                )}
+                {pages.map((page, index) => <NavItem eventKey={index + 1} key={page} href={this.props.router.createHref(page)}>
+                    {this.state.pagesNames[page]}
+                </NavItem>)}
             </Nav>
         );
     }
 
     render() {
         let navigation;
-        if (localStorage.profile) {
-            switch (localStorage.userType) {
-                case 'admin':
-                    navigation = this.getNavigation(this.state.adminNavigation);
-                    break;
-                case 'teacher':
-                    navigation = this.getNavigation(this.state.teacherNavigation);
-                    break;
-                case 'student':
-                    navigation = this.getNavigation(this.state.studentNavigation);
-                    break;
-                default:
-                    navigation = <div/>
-            }
-        } else {
-            navigation = <Navbar.Collapse>
-                <Navbar.Text pullRight>
-                    AcademEasy
-                </Navbar.Text>
-            </Navbar.Collapse>
+        switch (localStorage.role) {
+            case 'admin':
+                navigation = this.getNavigation(this.state.adminNavigation);
+                break;
+            case 'teacher':
+                navigation = this.getNavigation(this.state.teacherNavigation);
+                break;
+            case 'student':
+                navigation = this.getNavigation(this.state.studentNavigation);
+                break;
+            default:
+                navigation = (
+                    <Navbar.Collapse>
+                        <Navbar.Text pullRight>
+                            AcademEasy
+                        </Navbar.Text>
+                    </Navbar.Collapse>
+                )
         }
         return (
             <Navbar>

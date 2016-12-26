@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {
+    Grid,
+    Panel,
     Form,
     Col,
     ButtonToolbar,
@@ -10,14 +12,20 @@ import {
 } from 'react-bootstrap';
 import Select from 'react-select';
 
+import TeachersStore from './Stores/Teachers';
+import CoursesStore from './Stores/Courses';
+
 class TeacherDetails extends Component {
-  constructor(props) {
-      super(props);
-      this.state = Object.assign({}, this.props.teacher);
+    constructor(props) {
+        super(props);
+        const {teacherId} = this.props.params;
+        this.state = TeachersStore.getTeacher(parseInt(teacherId, 10)) || {};
     }
 
     onChangeCourses = (courses) => {
-      this.setState({courses: courses});
+        this.setState({
+            courses: courses.map((course) => course.value)
+        });
     }
 
     onChange = (valueName) => {
@@ -27,60 +35,74 @@ class TeacherDetails extends Component {
     }
 
     update = () => {
-      if (this.props.onChange) {
-        this.props.onChange(this.state);
-      }
+        if (this.state.id) {
+            TeachersStore.updateTeacher(this.state);
+        } else {
+            const newId = TeachersStore.addTeacher(this.state);
+            this.props.router.push(`/teacher/${newId}`)
+        }
     }
 
     sendPassword = () => {
-      if(this.props.onSendPassword) {
-        this.props.onSendPassword(this.state);
-      }
+        if (this.props.onSendPassword) {
+            this.props.onSendPassword(this.state);
+        }
     }
 
     render() {
-        return (
-            <Form horizontal>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>Login</Col>
-                    <Col sm={10}>
-                        <FormControl type="text" onChange={this.onChange('login')} value={this.state.login}/>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>Courses</Col>
-                    <Col sm={10}>
-                        <Select multi options={this.props.courses} value={this.state.courses} onChange={this.onChangeCourses}/>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>First Name</Col>
-                    <Col sm={10}>
-                        <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.firstName}/>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
-                    <Col sm={10}>
-                        <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.lastName}/>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>Email</Col>
-                    <Col sm={10}>
-                        <FormControl type="email" onChange={this.onChange('email')} value={this.state.email}/>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col smOffset={2} sm={10}>
-                        <ButtonToolbar>
-                          <Button onClick={this.update}>Update</Button>
-                          <Button onClick={this.sendPassword}>Send Password</Button>
-                        </ButtonToolbar>
-                    </Col>
-                </FormGroup>
+        const courses = CoursesStore.getCourses().map((course) => {
+            return {label: course.label, value: course.id};
+        });
 
-            </Form>
+        return (
+            <Grid className="table-background">
+                <Panel header={this.state.login
+                    ? `Teacher ${this.state.login}`
+                    : 'New teacher'}></Panel>
+
+                <Form horizontal>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Login</Col>
+                        <Col sm={10}>
+                            <FormControl type="text" onChange={this.onChange('login')} value={this.state.login || ''}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Courses</Col>
+                        <Col sm={10}>
+                            <Select multi options={courses} value={this.state.courses || []} onChange={this.onChangeCourses}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>First Name</Col>
+                        <Col sm={10}>
+                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.firstName || ''}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
+                        <Col sm={10}>
+                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.lastName || ''}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Email</Col>
+                        <Col sm={10}>
+                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.email || ''}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col smOffset={2} sm={10}>
+                            <ButtonToolbar>
+                                <Button onClick={this.update} disabled={!this.state.login}>{this.state.id
+                                        ? 'Update'
+                                        : 'Add'}</Button>
+                                <Button onClick={this.sendPassword} disabled={!this.state.email}>Send Password</Button>
+                            </ButtonToolbar>
+                        </Col>
+                    </FormGroup>
+                </Form>
+            </Grid>
         );
     }
 }

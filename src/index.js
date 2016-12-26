@@ -8,8 +8,11 @@ import MainPage from './MainPage';
 import CoursesList from './CoursesList';
 import CourseDetails from './CourseDetails';
 import ProfileDetails from './ProfileDetails';
-import StudentsManagement from './StudentsManagement';
-import TeachersManagement from './TeachersManagement';
+import TeachersList from './TeachersList';
+import TeacherDetails from './TeacherDetails';
+import StudentsList from './StudentsList';
+import StudentDetails from './StudentDetails';
+import Timetable from './Timetable';
 
 import App from './App';
 
@@ -20,7 +23,7 @@ import './index.css';
 import './TableManagement.css';
 
 function redirectToLogin(nextState, replace) {
-  if (!localStorage.profile) {
+  if (!localStorage.role) {
     replace({
       pathname: '/login',
       state: { nextPathname: nextState.location.pathname }
@@ -35,9 +38,13 @@ ReactDOM.render(
         <Route path="home" components={{navBar: withRouter(NavBar), content: MainPage}}/>
         <Route path="courses" components={{navBar: withRouter(NavBar), content: CoursesList}}/>
         <Route path="course/:courseId" components={{navBar: withRouter(NavBar), content: CourseDetails}}/>
-        <Route path="students" components={{navBar: withRouter(NavBar), content: StudentsManagement}}/>
-        <Route path="teachers" components={{navBar: withRouter(NavBar), content: TeachersManagement}}/>
+        <Route path="students" components={{navBar: withRouter(NavBar), content: withRouter(StudentsList)}}/>
+        <Route path="student/:studentId" components={{navBar: withRouter(NavBar), content: withRouter(StudentDetails)}}/>
+        <Route path="teachers" components={{navBar: withRouter(NavBar), content: withRouter(TeachersList)}}/>
+        <Route path="teacher/:teacherId" components={{navBar: withRouter(NavBar), content: withRouter(TeacherDetails)}}/>
         <Route path="profile" components={{navBar: withRouter(NavBar), content: ProfileDetails}}/>
+        <Route path="calendar" components={{navBar: withRouter(NavBar), content: withRouter(Timetable)}}/>
+        <Route path="calendar/:eventId" components={{navBar: withRouter(NavBar), content: withRouter(Timetable)}}/>
     </Route>
     <Route path="/login" component={LoginDialog}/>
 </Router>, document.getElementById('root'));

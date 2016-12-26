@@ -11,31 +11,38 @@ import {
 } from 'react-bootstrap';
 import './LoginDialog.css';
 
+import UsersStore from './Stores/Users';
+
 class LoginDialog extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            loginData: {
-                username: '',
-                password: ''
-            }
+          username: '',
+          password: ''
         };
     }
 
     onLogin = (event) => {
-        localStorage.profile = this.state.loginData;
-        localStorage.userType = 'admin';
-        if (location.state && location.state.nextPathname) {
-            location.replace(location.state.nextPathname);
-        } else {
-            location.replace('/');
+        var loginAction = UsersStore.loginUser(this.state.username, this.state.password);
+        if (loginAction.success) {
+            localStorage.role = loginAction.role;
+            console.log(this.props.router);
+            if (location.state && location.state.nextPathname) {
+                this.props.router.replace(location.state.nextPathname);
+            } else {
+                this.props.router.replace('/');
+            }
+        }
+    }
+
+    onChange = (valueName) => {
+        return (event) => {
+            this.setState({[valueName]: event.target.value});
         }
     }
 
     render() {
-      console.log(location);
-
         return (
             <Modal.Dialog>
                 <Modal.Header>
@@ -51,7 +58,7 @@ class LoginDialog extends Component {
                                 Login
                             </Col>
                             <Col sm={10}>
-                                <FormControl type="text" placeholder="Login"/>
+                                <FormControl type="text" placeholder="Login" value={this.state.username} onChange={this.onChange('username')}/>
                             </Col>
                         </FormGroup>
 
@@ -60,7 +67,7 @@ class LoginDialog extends Component {
                                 Password
                             </Col>
                             <Col sm={10}>
-                                <FormControl type="password" placeholder="Password"/>
+                                <FormControl type="password" placeholder="Password" value={this.state.password} onChange={this.onChange('password')}/>
                             </Col>
                         </FormGroup>
                         <FormGroup>
@@ -71,7 +78,7 @@ class LoginDialog extends Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                        <Button onClick={this.onLogin}>Sign in</Button>
+                    <Button onClick={this.onLogin}>Sign in</Button>
                 </Modal.Footer>
 
             </Modal.Dialog>
