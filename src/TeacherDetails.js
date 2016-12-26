@@ -38,9 +38,9 @@ class TeacherDetails extends Component {
         if (this.state.id) {
             TeachersStore.updateTeacher(this.state);
         } else {
-            const newId = TeachersStore.addTeacher(this.state);
-            this.props.router.push(`/teacher/${newId}`)
+            TeachersStore.addTeacher(this.state);
         }
+        this.props.router.push('/teachers');
     }
 
     sendPassword = () => {

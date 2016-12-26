@@ -43,9 +43,9 @@ class StudentDetails extends Component {
         if (this.state.id) {
             StudentsStore.updateStudent(this.state);
         } else {
-            const newId = StudentsStore.addStudent(this.state);
-            this.props.router.push(`/student/${newId}`)
+            StudentsStore.addStudent(this.state);
         }
+        this.props.router.push('/students');
     }
 
     sendPassword = () => {

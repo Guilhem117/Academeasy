@@ -15,7 +15,8 @@ class Timetable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            events: []
+            events: [],
+            calendarView: localStorage.calendarView || 'month'
         }
         this.courses = CoursesStore.getCourses();
     }
@@ -33,9 +34,14 @@ class Timetable extends Component {
         this.setState({events: CalendarStore.getCalendar()});
     }
 
-    eventStyler = (event) => {
+    onCalendarView = (view) => {
+      localStorage.calendarView = view;
+      this.setState({calendarView: view});
+    }
+
+    entryStyler = (entry) => {
         const course = this.courses.find((c) => {
-            return c.id === event.course;
+            return c.id === entry.course;
         });
 
         return {
@@ -43,6 +49,14 @@ class Timetable extends Component {
                 backgroundColor: course.color
             }
         }
+    }
+
+    entryLabel = (entry) => {
+      const course = this.courses.find((c) => {
+          return c.id === entry.course;
+      });
+
+      return course.code;
     }
 
     onSelectSlot = (slotInfo) => {
@@ -55,13 +69,14 @@ class Timetable extends Component {
 
     render() {
         const {eventId} = this.props.params;
+
         return (
             <Grid className="table-background">
                 <Panel header="Courses timetable">
                     <Row style={{
                         height: '500px'
                     }}>
-                        <BigCalendar events={this.state.events} timeslots={10} titleAccessor='course' selectable onSelectEvent={this.onSelectEvent} onSelectSlot={this.onSelectSlot} eventPropGetter={this.eventStyler}/>
+                        <BigCalendar events={this.state.events} view={this.state.calendarView} onView={this.onCalendarView} timeslots={10} titleAccessor={this.entryLabel} selectable onSelectEvent={this.onSelectEvent} onSelectSlot={this.onSelectSlot} eventPropGetter={this.entryStyler}/>
                     </Row>
                     {eventId && <TimetableEdit entryId={eventId} {...this.props}/>}
                 </Panel>

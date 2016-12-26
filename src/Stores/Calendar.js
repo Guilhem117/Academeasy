@@ -1,21 +1,21 @@
 let calendar = [
   {
     id: 0,
-    course: 'MASCOUR1',
+    course: 0,
     teacher: 1,
     start: new Date(2016, 11, 26, 12, 0),
     end: new Date(2016, 11, 26, 14, 0),
   },
   {
     id: 1,
-    course: 'MASCOUR2',
+    course: 1,
     teacher: 2,
     start: new Date(2016, 11, 26, 16, 0),
     end: new Date(2016, 11, 26, 18, 0),
   },
   {
     id: 2,
-    course: 'MASCOUR3',
+    course: 2,
     teacher: 3,
     start: new Date(2016, 11, 26, 18, 0),
     end: new Date(2016, 11, 26, 19, 0),

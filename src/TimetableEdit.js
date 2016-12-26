@@ -4,7 +4,6 @@ import {
     Form,
     FormGroup,
     ControlLabel,
-    FormControl,
     Col,
     Button
 } from 'react-bootstrap';
@@ -41,6 +40,7 @@ class TimetableEdit extends Component {
     onSelectChange = (which) => {
 
         return (value) => {
+          console.log(value);
             this.setState({
                 [which]: value
                     ? value.value
@@ -56,7 +56,6 @@ class TimetableEdit extends Component {
     }
 
     onSave = _ => {
-        console.log(this.state);
         if (this.state.id) {
             CalendarStore.updateEntry(this.state);
         } else {
@@ -95,7 +94,7 @@ class TimetableEdit extends Component {
                                 Course
                             </Col>
                             <Col sm={10}>
-                                <Select options={courses} value={this.state.course || ''} onChange={this.onSelectChange('course')}/>
+                                <Select options={courses} value={this.state.course > -1 ? this.state.course : ''} onChange={this.onSelectChange('course')}/>
                             </Col>
                         </FormGroup>
 
@@ -104,7 +103,7 @@ class TimetableEdit extends Component {
                                 Teacher
                             </Col>
                             <Col sm={10}>
-                                <Select options={teachers} value={this.state.teacher || ''} onChange={this.onSelectChange('teacher')}/>
+                                <Select options={teachers} value={this.state.teacher > -1 ? this.state.teacher : ''} onChange={this.onSelectChange('teacher')}/>
                             </Col>
                         </FormGroup>
 

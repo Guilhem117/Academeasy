@@ -22,6 +22,12 @@ const TeachersStore = {
         return teachers.slice();
     },
 
+    getTeachersForCourse: (course) => {
+        return teachers.filter((teacher) => {
+            return teacher.courses.includes(course);
+        });
+    },
+
     getTeacher: (teacherId) => {
         const arrayPos = teachers.findIndex((s) => {
             return teacherId === s.id;
@@ -29,6 +35,19 @@ const TeachersStore = {
         return arrayPos > -1
             ? teachers[arrayPos]
             : null;
+    },
+
+    addCourseToTeacher: (teacherId, courseId) => {
+        const arrayPos = teachers.findIndex((s) => {
+            return teacherId === s.id;
+        });
+        if (arrayPos > -1 && !teachers[arrayPos].courses.includes(courseId)) {
+            teachers[arrayPos].courses = [
+                ...teachers[arrayPos].courses,
+                courseId
+            ]
+            TeachersStore.notify();
+        }
     },
 
     updateTeacher: (teacher) => {
