@@ -1,69 +1,117 @@
-let students = [
-    {
-        id: 1,
-        login: 'nicolas',
-        firstName: 'Nicolas',
-        lastName: 'Fromage',
-        email: 'amirazighmi@yahoo.com',
-        year: 'M2',
-        courses: []
-    }, {
-        id: 2,
-        login: 'laura',
-        firstName: 'Laura',
-        lastName: 'Lala',
-        year: 'M1',
-        courses: []
-    }
-];
-
 let listeners = [];
 
 const StudentsStore = {
-    getStudents: _ => {
-        return students.slice();
+    getStudents: (search) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const url = search
+            ? `http://localhost:8081/api/students?search=${search}`
+            : 'http://localhost:8081/api/students';
+
+        const request = new Request(url, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
+
     },
 
+
     getStudent: (studentId) => {
-        const arrayPos = students.findIndex((s) => {
-            return studentId === s.id;
-        });
-        return arrayPos > -1
-            ? students[arrayPos]
-            : null;
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/students/${studentId}`, {
+          credentials: 'include',
+          method: 'GET',
+          headers: headers
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     updateStudent: (student) => {
-        const arrayPos = students.findIndex((s) => {
-            return student.id === s.id;
-        });
-        if (arrayPos > -1) {
-            students[arrayPos] = student;
-            StudentsStore.notify();
-        }
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/students/${student.username}`, {
+          credentials: 'include',
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify(student),
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
-    removeStudent: (studentId) => {
-        const arrayPos = students.findIndex((s) => {
-            return studentId === s.id;
-        });
-        if (arrayPos > -1) {
-            students.splice(arrayPos, 1);
-            StudentsStore.notify();
-        }
+    removeStudent: (username) => {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/students/${username}`, {
+          credentials: 'include',
+          method: 'DELETE',
+          headers: headers,
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     addStudent: (student) => {
-        let max = 0;
-        students.forEach((s) => {
-            if (s.id > max)
-                max = s.id;
-            }
-        );
-        student.id = max + 1;
-        students.push(student);
-        StudentsStore.notify();
-        return student.id;
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/students`, {
+          credentials: 'include',
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(student),
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     addListener: (callback) => {

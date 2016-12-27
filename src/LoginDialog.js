@@ -18,22 +18,22 @@ class LoginDialog extends Component {
         super(props);
 
         this.state = {
-          username: '',
-          password: ''
+            username: '',
+            password: ''
         };
     }
 
     onLogin = (event) => {
-        var loginAction = UsersStore.loginUser(this.state.username, this.state.password);
-        if (loginAction.success) {
-            localStorage.role = loginAction.role;
-            console.log(this.props.router);
-            if (location.state && location.state.nextPathname) {
-                this.props.router.replace(location.state.nextPathname);
-            } else {
-                this.props.router.replace('/');
+        UsersStore.loginUser(this.state.username, this.state.password).then((loginAction) => {
+            if (loginAction.success) {
+                localStorage.role = loginAction.role;
+                if (location.state && location.state.nextPathname) {
+                    this.props.router.replace(location.state.nextPathname);
+                } else {
+                    this.props.router.replace('/');
+                }
             }
-        }
+        });
     }
 
     onChange = (valueName) => {

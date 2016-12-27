@@ -20,32 +20,94 @@ class StudentDetails extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            student: {},
+            courses: [],
+            years: []
+        };
+
+    }
+
+    componentWillMount = () => {
         const {studentId} = this.props.params;
-        this.state = StudentsStore.getStudent(parseInt(studentId, 10)) || {};
+        if (studentId !== 'new') {
+            StudentsStore.getStudent(studentId).then((student) => {
+                this.setState({student});
+            });
+        }
+
+        CoursesStore.getCourses().then((courses) => {
+            this.setState({
+                courses: courses.map((course) => {
+                    return {label: course.label, value: course.code};
+                })
+            });
+        });
+
+        YearsStore.getYears().then((years) => {
+            this.setState({
+                years: years.map((year) => {
+                    return {label: year.label, value: year.code};
+                })
+            });
+        });
+
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if (this.props.params.studentId !== nextProps.params.studentId) {
+            const {studentId} = this.props.params;
+            if (studentId !== 'new') {
+                StudentsStore.getStudent(studentId).then((student) => {
+                    this.setState(student);
+                });
+            }
+        }
 
     }
 
     onChangeCourses = (courses) => {
-        this.setState({courses: courses.map((course) => course.value)});
+        const coursesValues = courses.map((course) => course.value);
+        this.setState((prevState, props) => {
+            const student = prevState.student;
+            student.courses = coursesValues;
+            return {student};
+        });
     }
 
     onChangeYear = (year) => {
-        this.setState({year: year ? year.value : ''});
+        const yearValue = year
+            ? year.value
+            : '';
+        this.setState((prevState, props) => {
+            const student = prevState.student;
+            student.year = yearValue;
+            return {student};
+        });
     }
 
     onChange = (valueName) => {
         return (event) => {
-            this.setState({[valueName]: event.target.value});
+            const value = event.target.value;
+            this.setState((prevState, props) => {
+              const student = prevState.student;
+              student[valueName] = value;
+              return {student};
+            });
         }
     }
 
-    update = () => {
-        if (this.state.id) {
-            StudentsStore.updateStudent(this.state);
+    onUpdate = () => {
+        const {studentId} = this.props.params;
+        if (studentId === 'new') {
+            StudentsStore.addStudent(this.state.student).then((student) => {
+                this.props.router.push('/students');
+            });
         } else {
-            StudentsStore.addStudent(this.state);
+            StudentsStore.updateStudent(this.state.student).then((student) => {
+                this.props.router.push('/students');
+            });
         }
-        this.props.router.push('/students');
     }
 
     sendPassword = () => {
@@ -55,63 +117,57 @@ class StudentDetails extends Component {
     }
 
     render() {
-        const courses = CoursesStore.getCourses().map((course) => {
-            return {label: course.label, value: course.id};
-        });
-
-        const years = YearsStore.getYears().map((year) => {
-            return {label: year, value: year};
-        });
+        const {studentId} = this.props.params;
 
         return (
             <Grid className="table-background">
-                <Panel header={this.state.login
-                    ? `Student ${this.state.login}`
+                <Panel header={this.state.username
+                    ? `Student ${this.state.username}`
                     : 'New student'}></Panel>
                 <Form horizontal>
                     <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Login</Col>
+                        <Col componentClass={ControlLabel} sm={2}>Username</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('login')} value={this.state.login || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Courses</Col>
-                        <Col sm={10}>
-                            <Select multi options={courses} value={this.state.courses || []} onChange={this.onChangeCourses}/>
+                            <FormControl type="text" onChange={this.onChange('username')} value={this.state.student.username || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>First Name</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.firstName || ''}/>
+                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.student.firstName || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.lastName || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Year</Col>
-                        <Col sm={10}>
-                            <Select options={years} value={this.state.year || ''} onChange={this.onChangeYear}/>
+                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.student.lastName || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Email</Col>
                         <Col sm={10}>
-                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.email || ''}/>
+                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.student.email || ''}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Year</Col>
+                        <Col sm={10}>
+                            <Select options={this.state.years} value={this.state.student.year || ''} onChange={this.onChangeYear}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>Courses</Col>
+                        <Col sm={10}>
+                            <Select multi options={this.state.courses} value={this.state.student.courses || []} onChange={this.onChangeCourses}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
                             <ButtonToolbar>
-                                <Button onClick={this.update} disabled={!this.state.login}>{this.state.id
-                                        ? 'Update'
-                                        : 'Add'}</Button>
-                                <Button onClick={this.sendPassword} disabled={!this.state.email}>Send Password</Button>
+                                <Button onClick={this.onUpdate} disabled={!this.state.student.username}>{studentId === 'new'
+                                        ? 'Add'
+                                        : 'Update'}</Button>
+                                <Button onClick={this.sendPassword} disabled={!this.state.student.email}>Send Password</Button>
                             </ButtonToolbar>
                         </Col>
                     </FormGroup>
@@ -123,7 +179,7 @@ class StudentDetails extends Component {
 }
 
 StudentDetails.propTypes = {
-    onChange: React.PropTypes.func,
+    isNew: React.PropTypes.bool,
     onSendPassword: React.PropTypes.func
 };
 

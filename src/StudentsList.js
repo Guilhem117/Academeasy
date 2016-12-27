@@ -11,7 +11,8 @@ class StudentsList extends Component {
 
         this.state = {
             selected: [],
-            students: []
+            students: [],
+            yearsFilter: {}
         };
 
         this.selectRowProp = {
@@ -25,15 +26,25 @@ class StudentsList extends Component {
 
     componentWillMount() {
         StudentsStore.addListener(this.studentsStoreListener);
+        YearsStore.getYears().then((years) => {
+            this.setState({
+                yearsFilter: years.reduce((result, item) => {
+                    result[item] = item;
+                    return result;
+                }, {})
+            });
+        });
         this.studentsStoreListener();
     }
-    
+
     componentWillUnmount() {
         StudentsStore.removeListener(this.studentsStoreListener);
     }
 
     studentsStoreListener = () => {
-        this.setState({students: StudentsStore.getStudents()});
+        StudentsStore.getStudents().then((students) => {
+            this.setState({students: students});
+        });
     }
 
     onRowSelect = (row, isSelected, e) => {
@@ -62,7 +73,7 @@ class StudentsList extends Component {
     }
 
     onRowClick = (row) => {
-      this.props.router.push(`/student/${row.id}`);
+        this.props.router.push(`/student/${row.username}`);
     }
 
     onDelete = () => {
@@ -73,25 +84,26 @@ class StudentsList extends Component {
         this.props.router.push('/student/new');
     }
 
-    render() {
-        const yearsFilter = YearsStore.getYears().reduce((result, item) => {
-            result[item] = item;
-            return result;
-        }, {});
+    onSearchChange = (searchText, colInfos, multiColumnSearch) => {
+        StudentsStore.getStudents(searchText).then((students) => {
+            this.setState({students: students});
+        });
+    }
 
+    render() {
         return (
             <Grid className="table-background">
                 <Panel header="Students list">
                     <Row>
                         <BootstrapTable data={this.state.students} options={{
-                            onRowClick: this.onRowClick
+                            onRowClick: this.onRowClick,
+                            onSearchChange: this.onSearchChange
                         }} remote selectRow={this.selectRowProp} search striped hover>
-                            <TableHeaderColumn dataField='id' isKey autoValue>#</TableHeaderColumn>
-                            <TableHeaderColumn dataField='login'>Login</TableHeaderColumn>
+                            <TableHeaderColumn dataField='username' isKey>Login</TableHeaderColumn>
                             <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-                            <TableHeaderColumn dataField='year' filter={yearsFilter}>Year</TableHeaderColumn>
+                            <TableHeaderColumn dataField='year' filter={this.state.yearsFilter}>Year</TableHeaderColumn>
                         </BootstrapTable>
                     </Row>
                     <Row>
