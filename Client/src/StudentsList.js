@@ -43,7 +43,7 @@ class StudentsList extends Component {
 
     studentsStoreListener = () => {
         StudentsStore.getStudents().then((students) => {
-            this.setState({students: students});
+            this.setState({students});
         });
     }
 
@@ -52,12 +52,12 @@ class StudentsList extends Component {
             this.setState({
                 selected: [
                     ...this.state.selected,
-                    row.id
+                    row.username
                 ]
             });
         } else {
             this.setState({
-                selected: this.state.selected.filter(it => it !== row.id)
+                selected: this.state.selected.filter(it => it !== row.username)
             });
         }
     }
@@ -65,7 +65,7 @@ class StudentsList extends Component {
     onSelectAll = (isSelected, rows) => {
         if (isSelected) {
             this.setState({
-                selected: rows.map((row) => row.id)
+                selected: rows.map((row) => row.username)
             });
         } else {
             this.setState({selected: []});
@@ -99,7 +99,7 @@ class StudentsList extends Component {
                             onRowClick: this.onRowClick,
                             onSearchChange: this.onSearchChange
                         }} remote selectRow={this.selectRowProp} search striped hover>
-                            <TableHeaderColumn dataField='username' isKey>Login</TableHeaderColumn>
+                            <TableHeaderColumn isKey dataField='username'>Username</TableHeaderColumn>
                             <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>

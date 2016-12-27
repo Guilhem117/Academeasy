@@ -5,11 +5,13 @@ const router = express.Router();
 const users = require('./routes/users');
 const courses = require('./routes/courses');
 const students = require('./routes/students');
+const teachers = require('./routes/teachers');
 const years = require('./routes/years');
 
 router.use('/users', users);
 router.use('/courses', courses);
 router.use('/students', students);
+router.use('/teachers', teachers);
 router.use('/years', years);
 
 // catch 404 and forward to error handler

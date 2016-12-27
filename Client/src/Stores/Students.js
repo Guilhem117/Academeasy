@@ -28,12 +28,12 @@ const StudentsStore = {
     },
 
 
-    getStudent: (studentId) => {
+    getStudent: (username) => {
       const headers = new Headers();
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
 
-      const request = new Request(`http://localhost:8081/api/students/${studentId}`, {
+      const request = new Request(`http://localhost:8081/api/students/${username}`, {
           credentials: 'include',
           method: 'GET',
           headers: headers

@@ -18,29 +18,76 @@ import CoursesStore from './Stores/Courses';
 class TeacherDetails extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            teacher: {},
+            courses: []
+        };
+
+    }
+
+    componentWillMount = () => {
         const {teacherId} = this.props.params;
-        this.state = TeachersStore.getTeacher(parseInt(teacherId, 10)) || {};
+        if (teacherId !== 'new') {
+            TeachersStore.getTeacher(teacherId).then((teacher) => {
+                this.setState({teacher});
+            });
+        }
+
+        CoursesStore.getCourses().then((courses) => {
+            this.setState({
+                courses: courses.map((course) => {
+                    return {label: course.label, value: course.code};
+                })
+            });
+        });
+
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if (this.props.params.teacherId !== nextProps.params.teacherId) {
+            const {teacherId} = this.props.params;
+            if (teacherId !== 'new') {
+                TeachersStore.getTeachers(teacherId).then((teacher) => {
+                    this.setState({teacher});
+                });
+            }
+        }
+
     }
 
     onChangeCourses = (courses) => {
-        this.setState({
-            courses: courses.map((course) => course.value)
+        const coursesValues = courses.map((course) => course.value);
+        this.setState((prevState, props) => {
+            const teacher = prevState.teacher;
+            teacher.courses = coursesValues;
+            return {teacher};
         });
     }
 
     onChange = (valueName) => {
         return (event) => {
-            this.setState({[valueName]: event.target.value});
+            const value = event.target.value;
+            this.setState((prevState, props) => {
+              const teacher = prevState.teacher;
+              teacher[valueName] = value;
+              return {teacher};
+            });
         }
     }
 
-    update = () => {
-        if (this.state.id) {
-            TeachersStore.updateTeacher(this.state);
+
+    onUpdate = () => {
+        const {teacherId} = this.props.params;
+        if (teacherId === 'new') {
+            TeachersStore.addTeacher(this.state.teacher).then((teacher) => {
+                this.props.router.push('/teachers');
+            });
         } else {
-            TeachersStore.addTeacher(this.state);
+            TeachersStore.updateTeacher(this.state.teacher).then((teacher) => {
+                this.props.router.push('/teachers');
+            });
         }
-        this.props.router.push('/teachers');
     }
 
     sendPassword = () => {
@@ -50,54 +97,52 @@ class TeacherDetails extends Component {
     }
 
     render() {
-        const courses = CoursesStore.getCourses().map((course) => {
-            return {label: course.label, value: course.id};
-        });
+      const {teacherId} = this.props.params;
 
         return (
             <Grid className="table-background">
-                <Panel header={this.state.login
-                    ? `Teacher ${this.state.login}`
+                <Panel header={this.state.teacher.username
+                    ? `Teacher ${this.state.teacher.username}`
                     : 'New teacher'}></Panel>
 
                 <Form horizontal>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Login</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('login')} value={this.state.login || ''}/>
+                            <FormControl type="text" onChange={this.onChange('username')} value={this.state.teacher.username || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Courses</Col>
                         <Col sm={10}>
-                            <Select multi options={courses} value={this.state.courses || []} onChange={this.onChangeCourses}/>
+                            <Select multi options={this.state.courses} value={this.state.teacher.courses || []} onChange={this.onChangeCourses}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>First Name</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.firstName || ''}/>
+                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.teacher.firstName || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
                         <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.lastName || ''}/>
+                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.teacher.lastName || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Email</Col>
                         <Col sm={10}>
-                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.email || ''}/>
+                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.teacher.email || ''}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
                             <ButtonToolbar>
-                                <Button onClick={this.update} disabled={!this.state.login}>{this.state.id
-                                        ? 'Update'
-                                        : 'Add'}</Button>
-                                <Button onClick={this.sendPassword} disabled={!this.state.email}>Send Password</Button>
+                                <Button onClick={this.onUpdate} disabled={!this.state.teacher.username}>{teacherId === 'new'
+                                        ? 'Add'
+                                        : 'Update'}</Button>
+                                <Button onClick={this.sendPassword} disabled={!this.state.teacher.email}>Send Password</Button>
                             </ButtonToolbar>
                         </Col>
                     </FormGroup>

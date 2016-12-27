@@ -121,8 +121,8 @@ class StudentDetails extends Component {
 
         return (
             <Grid className="table-background">
-                <Panel header={this.state.username
-                    ? `Student ${this.state.username}`
+                <Panel header={this.state.student.username
+                    ? `Student ${this.state.student.username}`
                     : 'New student'}></Panel>
                 <Form horizontal>
                     <FormGroup>

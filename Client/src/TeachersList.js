@@ -30,7 +30,9 @@ class TeachersList extends Component {
     }
 
     teachersStoreListener = () => {
-        this.setState({teachers: TeachersStore.getTeachers()});
+      TeachersStore.getTeachers().then((teachers) => {
+          this.setState({teachers});
+      });
     }
 
     onRowSelect = (row, isSelected, e) => {
@@ -38,12 +40,12 @@ class TeachersList extends Component {
             this.setState({
                 selected: [
                     ...this.state.selected,
-                    row.id
+                    row.username
                 ]
             });
         } else {
             this.setState({
-                selected: this.state.selected.filter(it => it !== row.id)
+                selected: this.state.selected.filter(it => it !== row.username)
             });
         }
     }
@@ -51,7 +53,7 @@ class TeachersList extends Component {
     onSelectAll = (isSelected, rows) => {
         if (isSelected) {
             this.setState({
-                selected: rows.map((row) => row.id)
+                selected: rows.map((row) => row.username)
             });
         } else {
             this.setState({selected: []});
@@ -59,11 +61,11 @@ class TeachersList extends Component {
     }
 
     onRowClick = (row) => {
-      this.props.router.push(`/teacher/${row.id}`);
+      this.props.router.push(`/teacher/${row.username}`);
     }
 
     onDelete = () => {
-        this.state.selected.forEach((teacherId) => TeachersStore.removeStudent(teacherId));
+        this.state.selected.forEach((teacherId) => TeachersStore.removeTeacher(teacherId));
     }
 
     onAdd = () => {
@@ -79,8 +81,7 @@ class TeachersList extends Component {
                     <BootstrapTable data={this.state.teachers} options={{
                       onRowClick: this.onRowClick
                     }} remote selectRow={this.selectRowProp} search striped hover>
-                        <TableHeaderColumn isKey dataField='id'>#</TableHeaderColumn>
-                        <TableHeaderColumn dataField='login'>Login</TableHeaderColumn>
+                        <TableHeaderColumn isKey dataField='username'>Username</TableHeaderColumn>
                         <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
                         <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
                         <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>

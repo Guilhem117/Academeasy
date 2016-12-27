@@ -1,86 +1,117 @@
-let teachers = [
-    {
-        id: 1,
-        login: 'azighmi',
-        firstName: 'Amira',
-        lastName: 'Zighmi',
-        email: 'amirazighmi@yahoo.com',
-        courses: []
-    }, {
-        id: 2,
-        login: 'toto',
-        firstName: 'Toto',
-        lastName: 'Lala',
-        courses: []
-    }
-];
-
 let listeners = [];
 
 const TeachersStore = {
-    getTeachers: _ => {
-        return teachers.slice();
+    getTeachers: (search) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const url = search
+            ? `http://localhost:8081/api/teachers?search=${search}`
+            : 'http://localhost:8081/api/teachers';
+
+        const request = new Request(url, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
+
     },
 
-    getTeachersForCourse: (course) => {
-        return teachers.filter((teacher) => {
-            return teacher.courses.includes(course);
-        });
-    },
 
-    getTeacher: (teacherId) => {
-        const arrayPos = teachers.findIndex((s) => {
-            return teacherId === s.id;
-        });
-        return arrayPos > -1
-            ? teachers[arrayPos]
-            : null;
-    },
+    getTeacher: (username) => {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
 
-    addCourseToTeacher: (teacherId, courseId) => {
-        const arrayPos = teachers.findIndex((s) => {
-            return teacherId === s.id;
-        });
-        if (arrayPos > -1 && !teachers[arrayPos].courses.includes(courseId)) {
-            teachers[arrayPos].courses = [
-                ...teachers[arrayPos].courses,
-                courseId
-            ]
-            TeachersStore.notify();
-        }
+      const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+          credentials: 'include',
+          method: 'GET',
+          headers: headers
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     updateTeacher: (teacher) => {
-        const arrayPos = teachers.findIndex((s) => {
-            return teacher.id === s.id;
-        });
-        if (arrayPos > -1) {
-            teachers[arrayPos] = teacher;
-            TeachersStore.notify();
-        }
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/teachers/${teacher.username}`, {
+          credentials: 'include',
+          method: 'PUT',
+          headers: headers,
+          body: JSON.stringify(teacher),
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
-    removeTeacher: (teacherId) => {
-        const arrayPos = teachers.findIndex((s) => {
-            return teacherId === s.id;
-        });
-        if (arrayPos > -1) {
-            teachers.splice(arrayPos, 1);
-            TeachersStore.notify();
-        }
+    removeTeacher: (username) => {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+          credentials: 'include',
+          method: 'DELETE',
+          headers: headers,
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     addTeacher: (teacher) => {
-        let max = 0;
-        teachers.forEach((s) => {
-            if (s.id > max)
-                max = s.id;
-            }
-        );
-        teacher.id = max + 1;
-        teachers.push(teacher);
-        TeachersStore.notify();
-        return teacher.id;
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const request = new Request(`http://localhost:8081/api/teachers`, {
+          credentials: 'include',
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(teacher),
+      });
+
+      return fetch(request).then(resp => {
+          if (resp.ok) {
+              return resp.json();
+          } else {
+              return Promise.reject();
+          }
+
+      });
     },
 
     addListener: (callback) => {
