@@ -1,9 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+'use strict';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
-var YearSchema = new Schema({
+const YearSchema = new Schema({
     code: {
         type: String,
         unique: true,
@@ -14,6 +15,6 @@ var YearSchema = new Schema({
     },
 });
 
-var Year = mongoose.model('Year', YearSchema);
+const Year = mongoose.model('Year', YearSchema);
 
 module.exports = Year;

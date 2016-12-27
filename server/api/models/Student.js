@@ -1,9 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+'use strict';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
-var StudentSchema = new Schema({
+const StudentSchema = new Schema({
     username: {
         type: String,
         unique: true,
@@ -29,6 +30,6 @@ var StudentSchema = new Schema({
     ]
 });
 
-var Student = mongoose.model('Student', StudentSchema);
+const Student = mongoose.model('Student', StudentSchema);
 
 module.exports = Student;

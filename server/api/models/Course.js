@@ -1,9 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+'use strict';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
-var CourseSchema = new Schema({
+const CourseSchema = new Schema({
     code: {
         type: String,
         unique: true,
@@ -18,6 +19,6 @@ var CourseSchema = new Schema({
 
 });
 
-var Course = mongoose.model('Course', CourseSchema);
+const Course = mongoose.model('Course', CourseSchema);
 
 module.exports = Course;
