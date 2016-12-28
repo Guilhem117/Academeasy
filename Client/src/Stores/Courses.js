@@ -1,5 +1,3 @@
-let listeners = [];
-
 const CoursesStore = {
     getCourses: (search) => {
         const headers = new Headers();
@@ -113,18 +111,54 @@ const CoursesStore = {
         });
     },
 
-    addListener: (callback) => {
-        listeners.push(callback);
+    setTeachers: (course, usernames) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const teachersList = {
+            teachers: Array.prototype.join.call(usernames, ',')
+        };
+
+        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
+            credentials: 'include',
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(teachersList)
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return;
+            } else {
+                return Promise.reject();
+            }
+
+        });
     },
 
-    removeListener: (callback) => {
-        listeners = listeners.filter((l) => l !== callback);
-    },
+    addAttachments: (courseCode, files) => {
+        const data = new FormData()
+        let i = 1;
+        Array.prototype.forEach.call(files, (file) => {
+            data.append(`file${i}`, file);
+            i++;
+        });
 
-    notify: _ => {
-        listeners.forEach((callback) => callback());
+        const request = new Request(`http://localhost:8081/api/courses/${courseCode}/attachment`, {
+            credentials: 'include',
+            method: 'POST',
+            body: data
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return;
+            } else {
+                return Promise.reject();
+            }
+        });
     }
-
 }
 
 export default CoursesStore;

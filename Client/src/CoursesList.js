@@ -13,18 +13,10 @@ class CoursesList extends Component {
     }
 
     componentWillMount() {
-        CoursesStore.addListener(this.coursesStoreListener);
-        this.coursesStoreListener();
+      CoursesStore.getCourses().then((courses) => {
+        this.setState({courses: courses});
+      });
     }
-
-    componentWillUnmount() {
-        CoursesStore.removeListener(this.coursesStoreListener);
-    }
-
-    coursesStoreListener = () => {
-        this.setState({courses: CoursesStore.getCourses()});
-    }
-
 
     render() {
         return (
@@ -33,8 +25,8 @@ class CoursesList extends Component {
                     marginBottom: '15px'
                 }}>
                   {this.state.courses.map(course => (
-                    <Col xs={6} md={3} key={course.id}>
-                        <Link to={`/course/${course.id}`}>
+                    <Col xs={6} md={3} key={course.code}>
+                        <Link to={`/course/${course.code}`}>
                             <Thumbnail src="/Books.jpg">
                                 <p className="text-center">{course.label}</p>
                             </Thumbnail>

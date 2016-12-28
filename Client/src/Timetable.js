@@ -16,32 +16,36 @@ class Timetable extends Component {
         super(props);
         this.state = {
             events: [],
+            courses: [],
             calendarView: localStorage.calendarView || 'month'
         }
-        this.courses = CoursesStore.getCourses();
     }
 
     componentWillMount() {
-        CalendarStore.addListener(this.calendarStoreListener);
-        this.calendarStoreListener();
-    }
-
-    componentWillUnmount() {
-        CalendarStore.removeListener(this.calendarStoreListener);
-    }
-
-    calendarStoreListener = () => {
-        this.setState({events: CalendarStore.getCalendar()});
+        Promise.all([CoursesStore.getCourses(), CalendarStore.getCalendar()]).then((values) => {
+            const [courses,
+                events] = values;
+            events.forEach((event) => {
+                event.start = event.start
+                    ? new Date(event.start)
+                    : '';
+                event.end = event.end
+                    ? new Date(event.end)
+                    : '';
+                return event;
+            });
+            this.setState({events, courses});
+        });
     }
 
     onCalendarView = (view) => {
-      localStorage.calendarView = view;
-      this.setState({calendarView: view});
+        localStorage.calendarView = view;
+        this.setState({calendarView: view});
     }
 
     entryStyler = (entry) => {
-        const course = this.courses.find((c) => {
-            return c.id === entry.course;
+        const course = this.state.courses.find((c) => {
+            return c.code === entry.course;
         });
 
         return {
@@ -52,19 +56,20 @@ class Timetable extends Component {
     }
 
     entryLabel = (entry) => {
-      const course = this.courses.find((c) => {
-          return c.id === entry.course;
-      });
+        const course = this.state.courses.find((c) => {
+            return c.code === entry.course;
+        });
 
-      return course.code;
+        return course.code;
     }
 
     onSelectSlot = (slotInfo) => {
-      this.props.router.push(`/calendar/new`);
+        console.log(slotInfo);
+        this.props.router.push(`/calendar/new?start=${slotInfo.start.getTime()}&end=${slotInfo.end.getTime()}`);
     }
 
     onSelectEvent = (event) => {
-      this.props.router.push(`/calendar/${event.id}`);
+        this.props.router.push(`/calendar/${event.id}`);
     }
 
     render() {

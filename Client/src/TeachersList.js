@@ -22,17 +22,9 @@ class TeachersList extends Component {
     }
 
     componentWillMount() {
-        TeachersStore.addListener(this.teachersStoreListener);
-        this.teachersStoreListener();
-    }
-    componentWillUnmount() {
-        TeachersStore.removeListener(this.teachersStoreListener);
-    }
-
-    teachersStoreListener = () => {
-      TeachersStore.getTeachers().then((teachers) => {
-          this.setState({teachers});
-      });
+        TeachersStore.getTeachers().then((teachers) => {
+            this.setState({teachers});
+        });
     }
 
     onRowSelect = (row, isSelected, e) => {
@@ -61,7 +53,7 @@ class TeachersList extends Component {
     }
 
     onRowClick = (row) => {
-      this.props.router.push(`/teacher/${row.username}`);
+        this.props.router.push(`/teacher/${row.username}`);
     }
 
     onDelete = () => {
@@ -76,21 +68,21 @@ class TeachersList extends Component {
         return (
             <Grid className="table-background">
                 <Panel header="Teachers list">
-                  <Row>
+                    <Row>
 
-                    <BootstrapTable data={this.state.teachers} options={{
-                      onRowClick: this.onRowClick
-                    }} remote selectRow={this.selectRowProp} search striped hover>
-                        <TableHeaderColumn isKey dataField='username'>Username</TableHeaderColumn>
-                        <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-                    </BootstrapTable>
-                  </Row>
-                  <Row>
-                      <Button onClick={this.onAdd}>Add</Button>
-                      <Button onClick={this.onDelete}>Delete</Button>
-                  </Row>
+                        <BootstrapTable data={this.state.teachers} options={{
+                            onRowClick: this.onRowClick
+                        }} remote selectRow={this.selectRowProp} search striped hover>
+                            <TableHeaderColumn isKey dataField='username'>Username</TableHeaderColumn>
+                            <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
+                        </BootstrapTable>
+                    </Row>
+                    <Row>
+                        <Button onClick={this.onAdd}>Add</Button>
+                        <Button onClick={this.onDelete}>Delete</Button>
+                    </Row>
                 </Panel>
             </Grid>
         );

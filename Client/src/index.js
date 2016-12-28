@@ -37,7 +37,7 @@ ReactDOM.render(
         <IndexRedirect to="home" />
         <Route path="home" components={{navBar: withRouter(NavBar), content: MainPage}}/>
         <Route path="courses" components={{navBar: withRouter(NavBar), content: CoursesList}}/>
-        <Route path="course/:courseId" components={{navBar: withRouter(NavBar), content: withRouter(CourseDetails)}}/>
+        <Route path="course/:courseCode" components={{navBar: withRouter(NavBar), content: withRouter(CourseDetails)}}/>
         <Route path="students" components={{navBar: withRouter(NavBar), content: withRouter(StudentsList)}}/>
         <Route path="student/:studentId" components={{navBar: withRouter(NavBar), content: withRouter(StudentDetails)}}/>
         <Route path="teachers" components={{navBar: withRouter(NavBar), content: withRouter(TeachersList)}}/>

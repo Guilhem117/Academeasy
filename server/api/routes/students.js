@@ -39,38 +39,20 @@ router.route('/').get((req, res, next) => {
         res.send('Invalid arguments');
         return;
     }
-    var student = new Student(req.body);
 
-    // save the user and check for errors
-    student.save((err) => {
-        if (err) {
-            if (err.code === 11000) {
-                res.status(409);
-                res.send('A student with same login exists');
-            } else {
-                next(err);
-            }
-            return;
+    Student.create(req.body).then(_ => {
+        return User.create({username: req.body.username, role: 'student'}); // create a new instance of the user model
+    }).then(_ => {
+        res.send({message: 'Student created!'});
+    }).catch((err) => {
+        if (err.code === 11000) {
+            res.status(409);
+            res.send('A user with same login exists');
+        } else {
+            next(err);
         }
-        var user = new User({username: req.body.username, role: 'student'}); // create a new instance of the user model
-
-        // save the user and check for errors
-        user.save((err) => {
-            if (err) {
-                if (err.code === 11000) {
-                    res.status(409);
-                    res.send('A user with same login exists');
-                } else {
-                    next(err);
-                }
-                return;
-            }
-
-            res.send({message: 'Student created!'});
-        });
 
     });
-
 });
 
 router.route('/:username').get((req, res, next) => {

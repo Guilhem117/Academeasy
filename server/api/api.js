@@ -7,12 +7,14 @@ const courses = require('./routes/courses');
 const students = require('./routes/students');
 const teachers = require('./routes/teachers');
 const years = require('./routes/years');
+const calendar = require('./routes/calendar');
 
 router.use('/users', users);
 router.use('/courses', courses);
 router.use('/students', students);
 router.use('/teachers', teachers);
 router.use('/years', years);
+router.use('/calendar', calendar);
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {

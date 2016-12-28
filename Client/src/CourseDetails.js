@@ -17,32 +17,51 @@ import 'rc-color-picker/assets/index.css';
 import CoursesStore from './Stores/Courses'
 import TeachersStore from './Stores/Teachers'
 
-const emptyEntry = {
-    id: null,
-    code: null,
-    label: null,
-    color: null,
-    files: []
-};
-
 class CourseDetails extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            course: CoursesStore.getCourse(parseInt(this.props.params.courseId, 10)) || emptyEntry,
-            teachers: TeachersStore.getTeachersForCourse(parseInt(this.props.params.courseId, 10)).map((teacher) => {
-                return teacher.id;
-            }) || []
+            course: {},
+            selectedTeachers: [],
+            teachers: [],
+            files: undefined
         };
     }
 
+    componentWillMount = () => {
+        const {courseCode} = this.props.params;
+
+        Promise.all([
+            courseCode === 'new'
+                ? {}
+                : CoursesStore.getCourse(courseCode),
+            TeachersStore.getTeachers()
+        ]).then((values) => {
+            const [course,
+                teachers] = values;
+            const selectedTeachers = teachers.filter((teacher) => {
+                return teacher.courses.includes(course.code);
+            }).map((teacher) => teacher.username);
+            this.setState({course, teachers, selectedTeachers});
+        });
+    }
+
     componentWillReceiveProps = (nextProps) => {
-        if (this.props.params.courseId !== nextProps.params.courseId) {
-            this.setState({
-                course: CoursesStore.getCourse(parseInt(nextProps.params.courseId, 10)) || emptyEntry,
-                teachers: TeachersStore.getTeachersForCourse(parseInt(nextProps.params.courseId, 10)).map((teacher) => {
-                    return teacher.id;
-                }) || []
+
+        if (this.props.params.courseCode !== nextProps.params.courseCode) {
+            const {courseCode} = nextProps.params;
+            Promise.all([
+                courseCode === 'new'
+                    ? {}
+                    : CoursesStore.getCourse(courseCode),
+                TeachersStore.getTeachers()
+            ]).then((values) => {
+                const [course,
+                    teachers] = values;
+                const selectedTeachers = teachers.filter((teacher) => {
+                    return teacher.courses.includes(course.code);
+                }).map((teacher) => teacher.username);
+                this.setState({course, teachers, selectedTeachers});
             });
         }
     }
@@ -50,16 +69,15 @@ class CourseDetails extends Component {
     onChange = (valueName) => {
         return (event) => {
             if (event.target.files) {
-                const files = event.target.files;
-                this.setState((prevState, props) => {
-                    prevState.course[valueName] = files;
-                    return {course: prevState.course};
-                });
+                const {files} = event.target;
+                console.log(files);
+                this.setState({files: files});
             } else {
                 const value = event.target.value;
                 this.setState((prevState, props) => {
-                    prevState.course[valueName] = value;
-                    return {course: prevState.course};
+                    const {course} = prevState;
+                    course[valueName] = value;
+                    return {course};
                 });
             }
         }
@@ -74,21 +92,21 @@ class CourseDetails extends Component {
 
     onChangeTeachers = (teachers) => {
         this.setState({
-            teachers: teachers.map((teacher) => teacher.value)
+            selectedTeachers: teachers.map((teacher) => teacher.value)
         });
     }
 
     onSave = _ => {
-        if (this.state.course.id > -1) {
-            CoursesStore.updateCourse(this.state.course);
-            this.state.teachers.forEach((teacherId) => {
-                TeachersStore.addCourseToTeacher(teacherId, this.state.course.id);
-            });
+        const {courseCode} = this.props.params;
+        if (courseCode === 'new') {
+            CoursesStore.addCourse(this.state.course);
         } else {
-            const courseId = CoursesStore.addCourse(this.state.course);
-            this.state.teachers.forEach((teacherId) => {
-                TeachersStore.addCourseToTeacher(teacherId, courseId);
-            });
+            CoursesStore.updateCourse(this.state.course);
+        }
+        CoursesStore.setTeachers(this.state.course.code, this.state.selectedTeachers);
+
+        if (this.state.files && this.state.files.length > 0) {
+            CoursesStore.addAttachments(this.state.course.code, this.state.files);
         }
         this.props.router.push('/courses');
     }
@@ -98,13 +116,15 @@ class CourseDetails extends Component {
     }
 
     render() {
-        const allTeachers = TeachersStore.getTeachers().map((teacher) => {
-            return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.id};
+        const allTeachers = this.state.teachers.map((teacher) => {
+            return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.username};
         });
 
         return (
             <Grid className="table-background">
-                <Panel header={`Course ${this.state.course.label}`}></Panel>
+                <Panel header={this.state.course.code
+                    ? `Course ${this.state.course.code}`
+                    : 'New course'}></Panel>
                 <Form horizontal>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Code</Col>
@@ -121,8 +141,14 @@ class CourseDetails extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Files</Col>
                         <Col sm={10}>
-                            <FormControl type="file" multiple onChange={this.onChange('files')}/> {this.state.course.files
-                                ? <ul>{Array.prototype.map.call(this.state.course.files, file => (
+                            <FormControl type="file" multiple onChange={this.onChange('files')}/> {this.state.files
+                                ? <ul>{Array.prototype.map.call(this.state.files, (file) => (
+                                            <li key={file.name}>{file.name}</li>
+                                        ))}
+                                    </ul>
+                                : null}
+                            {this.state.course.attachments
+                                ? <ul>{this.state.course.attachments.map((file) => (
                                             <li key={file.name}>{file.name}</li>
                                         ))}
                                     </ul>
@@ -138,7 +164,7 @@ class CourseDetails extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Teachers</Col>
                         <Col sm={10}>
-                            <Select multi options={allTeachers} value={this.state.teachers || []} onChange={this.onChangeTeachers}/>
+                            <Select multi options={allTeachers} value={this.state.selectedTeachers || []} onChange={this.onChangeTeachers}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>

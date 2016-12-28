@@ -1,5 +1,3 @@
-let listeners = [];
-
 const TeachersStore = {
     getTeachers: (search) => {
         const headers = new Headers();
@@ -114,17 +112,6 @@ const TeachersStore = {
       });
     },
 
-    addListener: (callback) => {
-        listeners.push(callback);
-    },
-
-    removeListener: (callback) => {
-        listeners = listeners.filter((l) => l !== callback);
-    },
-
-    notify: _ => {
-        listeners.forEach((callback) => callback());
-    }
 };
 
 export default TeachersStore;

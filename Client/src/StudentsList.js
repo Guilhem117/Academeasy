@@ -12,7 +12,7 @@ class StudentsList extends Component {
         this.state = {
             selected: [],
             students: [],
-            yearsFilter: {}
+            years: []
         };
 
         this.selectRowProp = {
@@ -25,25 +25,10 @@ class StudentsList extends Component {
     }
 
     componentWillMount() {
-        StudentsStore.addListener(this.studentsStoreListener);
-        YearsStore.getYears().then((years) => {
-            this.setState({
-                yearsFilter: years.reduce((result, item) => {
-                    result[item] = item;
-                    return result;
-                }, {})
-            });
-        });
-        this.studentsStoreListener();
-    }
-
-    componentWillUnmount() {
-        StudentsStore.removeListener(this.studentsStoreListener);
-    }
-
-    studentsStoreListener = () => {
-        StudentsStore.getStudents().then((students) => {
-            this.setState({students});
+        Promise.all([YearsStore.getYears(), StudentsStore.getStudents()]).then((values) => {
+            const [years,
+                students] = values;
+            this.setState({years, students});
         });
     }
 
@@ -91,6 +76,11 @@ class StudentsList extends Component {
     }
 
     render() {
+        const yearsFilter = this.state.years.reduce((result, item) => {
+            result[item] = item;
+            return result;
+        }, {});
+
         return (
             <Grid className="table-background">
                 <Panel header="Students list">
@@ -103,7 +93,7 @@ class StudentsList extends Component {
                             <TableHeaderColumn dataField='firstName'>First Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='lastName'>Last Name</TableHeaderColumn>
                             <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-                            <TableHeaderColumn dataField='year' filter={this.state.yearsFilter}>Year</TableHeaderColumn>
+                            <TableHeaderColumn dataField='year' filter={yearsFilter}>Year</TableHeaderColumn>
                         </BootstrapTable>
                     </Row>
                     <Row>

@@ -16,50 +16,97 @@ import CalendarStore from './Stores/Calendar';
 import TeachersStore from './Stores/Teachers';
 import CoursesStore from './Stores/Courses';
 
-const emptyEntry = {
-  id: null,
-  course: null,
-  teacher: null,
-  start: null,
-  end: null,
-};
-
 class TimetableEdit extends Component {
 
     constructor(props) {
         super(props);
-        this.state = CalendarStore.getEntry(parseInt(this.props.entryId, 10)) || emptyEntry;
+        this.state = {
+            entry: {},
+            courses: [],
+            teachers: []
+        };
+    }
+
+    componentWillMount = () => {
+        const {entryId} = this.props;
+        Promise.all([
+            entryId === 'new'
+                ? {
+                    start: parseInt(this.props.location.query.start, 10),
+                    end:  parseInt(this.props.location.query.end, 10),
+                }
+                : CalendarStore.getEntry(entryId),
+            CoursesStore.getCourses(),
+            TeachersStore.getTeachers()
+        ]).then((values) => {
+            const [entry,
+                courses,
+                teachers] = values;
+
+            entry.start = entry.start
+                ? new Date(entry.start)
+                : '';
+            entry.end = entry.end
+                ? new Date(entry.end)
+                : '';
+            this.setState({entry, courses, teachers});
+        });
     }
 
     componentWillReceiveProps = (nextProps) => {
         if (this.props.entryId !== nextProps.entryId) {
-            this.setState(CalendarStore.getEntry(parseInt(nextProps.entryId, 10)) || emptyEntry);
+            const {entryId} = nextProps;
+            Promise.all([
+                entryId === 'new'
+                    ? {
+                      start: parseInt(this.props.location.query.start, 10),
+                      end:  parseInt(this.props.location.query.end, 10),
+                    }
+                    : CalendarStore.getEntry(entryId),
+                CoursesStore.getCourses(),
+                TeachersStore.getTeachers()
+            ]).then((values) => {
+                const [entry,
+                    courses,
+                    teachers] = values;
+
+                entry.start = entry.start
+                    ? new Date(entry.start)
+                    : '';
+                entry.end = entry.end
+                    ? new Date(entry.end)
+                    : '';
+                this.setState({entry, courses, teachers});
+            });
         }
     }
 
     onSelectChange = (which) => {
-
         return (value) => {
-          console.log(value);
-            this.setState({
-                [which]: value
-                    ? value.value
-                    : ''
+            const newValue = value.value;
+            this.setState((prevState, props) => {
+                const entry = prevState.entry;
+                entry[which] = newValue || '';
+                return {entry};
             });
         }
     }
 
     onDateChange = (which) => {
         return (newDate) => {
-            this.setState({[which]: newDate.toDate()});
+            this.setState((prevState, props) => {
+                const entry = prevState.entry;
+                entry[which] = newDate.toDate();
+                return {entry};
+            });
         }
     }
 
     onSave = _ => {
-        if (this.state.id) {
-            CalendarStore.updateEntry(this.state);
+        if (this.state.entry.id) {
+            CalendarStore.updateEntry(this.state.entry);
         } else {
-            CalendarStore.addEntry(this.state);
+            CalendarStore.addEntry(this.state.entry);
         }
         this.props.router.push('/calendar');
     }
@@ -69,14 +116,14 @@ class TimetableEdit extends Component {
     }
 
     render() {
-        const courses = CoursesStore.getCourses().map((course) => {
-            return {label: course.label, value: course.id};
+        const courses = this.state.courses.map((course) => {
+            return {label: course.label, value: course.code};
         });
 
-        const teachers = TeachersStore.getTeachers().filter((teacher) => {
-            return teacher.courses.includes(this.state.course);
+        const teachers = this.state.teachers.filter((teacher) => {
+            return teacher.courses.includes(this.state.entry.course);
         }).map((teacher) => {
-            return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.id};
+            return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.username};
         });
 
         return (
@@ -94,7 +141,7 @@ class TimetableEdit extends Component {
                                 Course
                             </Col>
                             <Col sm={10}>
-                                <Select options={courses} value={this.state.course > -1 ? this.state.course : ''} onChange={this.onSelectChange('course')}/>
+                                <Select options={courses} value={this.state.entry.course} onChange={this.onSelectChange('course')}/>
                             </Col>
                         </FormGroup>
 
@@ -103,7 +150,7 @@ class TimetableEdit extends Component {
                                 Teacher
                             </Col>
                             <Col sm={10}>
-                                <Select options={teachers} value={this.state.teacher > -1 ? this.state.teacher : ''} onChange={this.onSelectChange('teacher')}/>
+                                <Select options={teachers} value={this.state.entry.teacher} onChange={this.onSelectChange('teacher')}/>
                             </Col>
                         </FormGroup>
 
@@ -116,7 +163,7 @@ class TimetableEdit extends Component {
                                     minutes: {
                                         step: 15
                                     }
-                                }} value={this.state.start || ''} onChange={this.onDateChange('start')}/>
+                                }} value={this.state.entry.start} onChange={this.onDateChange('start')}/>
                             </Col>
                         </FormGroup>
                         <FormGroup>
@@ -128,14 +175,14 @@ class TimetableEdit extends Component {
                                     minutes: {
                                         step: 15
                                     }
-                                }} value={this.state.end || ''} onChange={this.onDateChange('end')}/>
+                                }} value={this.state.entry.end} onChange={this.onDateChange('end')}/>
                             </Col>
                         </FormGroup>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button onClick={this.onSave}>Save</Button>
-                  <Button onClick={this.onCancel}>Cancel</Button>
+                    <Button onClick={this.onSave}>Save</Button>
+                    <Button onClick={this.onCancel}>Cancel</Button>
                 </Modal.Footer>
 
             </Modal.Dialog>

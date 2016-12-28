@@ -1,83 +1,110 @@
-let calendar = [
-  {
-    id: 0,
-    course: 0,
-    teacher: 1,
-    start: new Date(2016, 11, 26, 12, 0),
-    end: new Date(2016, 11, 26, 14, 0),
-  },
-  {
-    id: 1,
-    course: 1,
-    teacher: 2,
-    start: new Date(2016, 11, 26, 16, 0),
-    end: new Date(2016, 11, 26, 18, 0),
-  },
-  {
-    id: 2,
-    course: 2,
-    teacher: 3,
-    start: new Date(2016, 11, 26, 18, 0),
-    end: new Date(2016, 11, 26, 19, 0),
-  }
-];
-
-let listeners = [];
-
 const CalendarStore = {
     getCalendar: _ => {
-        return calendar.slice();
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request('http://localhost:8081/api/calendar', {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
     },
 
     getEntry: (entryId) => {
-      return calendar.find((entry) => entry.id === entryId);
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
     },
 
     updateEntry: (entry) => {
-        const arrayPos = calendar.findIndex((s) => {
-            return entry.id === s.id;
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`http://localhost:8081/api/calendar/${entry.id}`, {
+            credentials: 'include',
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(entry)
         });
-        if (arrayPos > -1) {
-            calendar[arrayPos] = entry;
-            CalendarStore.notify();
-        }
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
     },
 
     removeEntry: (entryId) => {
-        const arrayPos = calendar.findIndex((s) => {
-            return entryId === s.id;
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
+            credentials: 'include',
+            method: 'DELETE',
+            headers: headers
         });
-        if (arrayPos > -1) {
-            calendar.splice(arrayPos, 1);
-            CalendarStore.notify();
-        }
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
     },
 
     addEntry: (entry) => {
-        let max = 0;
-        calendar.forEach((s) => {
-            if (s.id > max)
-                max = s.id;
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`http://localhost:8081/api/calendar`, {
+            credentials: 'include',
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(entry)
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
             }
-        );
-        entry.id = max + 1;
-        calendar.push(entry);
-        CalendarStore.notify();
-        return entry.id;
-    },
 
-    addListener: (callback) => {
-        listeners.push(callback);
-    },
-
-    removeListener: (callback) => {
-        listeners = listeners.filter((l) => l !== callback);
-    },
-
-    notify: _ => {
-        listeners.forEach((callback) => callback());
+        });
     }
-
 }
 
 export default CalendarStore;
