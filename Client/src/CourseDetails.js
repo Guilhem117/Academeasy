@@ -6,6 +6,7 @@ import {
     FormGroup,
     ControlLabel,
     FormControl,
+    Well,
     Col,
     ButtonToolbar,
     Button
@@ -70,7 +71,6 @@ class CourseDetails extends Component {
         return (event) => {
             if (event.target.files) {
                 const {files} = event.target;
-                console.log(files);
                 this.setState({files: files});
             } else {
                 const value = event.target.value;
@@ -98,6 +98,7 @@ class CourseDetails extends Component {
 
     onSave = _ => {
         const {courseCode} = this.props.params;
+        delete this.state.course.attachments;
         if (courseCode === 'new') {
             CoursesStore.addCourse(this.state.course);
         } else {
@@ -113,6 +114,10 @@ class CourseDetails extends Component {
 
     onCancel = _ => {
         this.props.router.push('/courses');
+    }
+
+    getAttachmentURL = (filename) => {
+        return CoursesStore.getAttachmentURL(this.state.course.code, filename);
     }
 
     render() {
@@ -142,14 +147,19 @@ class CourseDetails extends Component {
                         <Col componentClass={ControlLabel} sm={2}>Files</Col>
                         <Col sm={10}>
                             <FormControl type="file" multiple onChange={this.onChange('files')}/> {this.state.files
-                                ? <ul>{Array.prototype.map.call(this.state.files, (file) => (
-                                            <li key={file.name}>{file.name}</li>
-                                        ))}
-                                    </ul>
+                                ? <Well>
+                                        <h5>New documents</h5>
+                                        <ul>{Array.prototype.map.call(this.state.files, (file) => (
+                                                <li key={file.name}>{file.name}</li>
+                                            ))}
+                                        </ul>
+                                    </Well>
                                 : null}
                             {this.state.course.attachments
                                 ? <ul>{this.state.course.attachments.map((file) => (
-                                            <li key={file.name}>{file.name}</li>
+                                            <li key={file.name}>
+                                                <a href={this.getAttachmentURL(file.name)}>{file.name}</a>
+                                              </li>
                                         ))}
                                     </ul>
                                 : null}

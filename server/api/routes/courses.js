@@ -112,7 +112,7 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
                     $each: attachments
                 }
             }
-        }, {new: true}).select(documentSelection).exec().then((course) => {
+        }, {new: true}).exec().then((course) => {
             res.send(course);
         }).catch((err) => {
             next(err);
@@ -122,8 +122,12 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
 });
 
 router.route('/:courseCode/attachment/:attachmentName').get((req, res, next) => {
-    Course.findOne({code: req.params.courseCode, 'attachments.name': req.params.attachmentName}).exec().then((course) => {
-        res.send(course);
+    Course.findOne({code: req.params.courseCode, 'attachments.name': req.params.attachmentName}).select({'attachments.$': 1}).exec().then((course) => {
+        res.writeHead(200, {
+            'Content-Type': course.attachments[0].mimetype,
+            'Content-Length': course.attachments[0].length
+        });
+        res.end(course.attachments[0].data);
     }).catch((err) => {
         next(err);
     });

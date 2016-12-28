@@ -158,6 +158,10 @@ const CoursesStore = {
                 return Promise.reject();
             }
         });
+    },
+
+    getAttachmentURL: (courseCode, fileName) => {
+      return `http://localhost:8081/api/courses/${courseCode}/attachment/${fileName}`;
     }
 }
 
