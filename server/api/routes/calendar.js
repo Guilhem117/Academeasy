@@ -4,27 +4,72 @@ const uuid = require('node-uuid');
 const router = express.Router();
 
 const Calendar = require('../models/Calendar');
+const Student = require('../models/Student');
+const Teacher = require('../models/Teacher');
 
 router.route('/').get((req, res, next) => {
-    const query = Calendar.find()
     const {course, count} = req.query;
+    const {role, username} = req.session;
     const limit = parseInt(count, 10);
-    if(course) {
-      query.where({course});
-    }
-    if (limit) {
-        query.where({
-            start: {
-                $gte: new Date()
-            }
-        }).limit(limit);
-    }
-    query.select({'_id': 0, '__v': 0}).exec().then((events) => {
-        res.send(events);
-    }).catch((err) => {
-        next(err);
-    });
 
+    if (role !== 'admin') {
+        const {username} = req.session;
+        let model = null;
+        switch (role) {
+            case 'teacher':
+                model = Teacher;
+                break;
+            case 'student':
+                model = Student;
+                break;
+        }
+
+        model.findOne({username}).exec().then((user) => {
+            if (user && (!course || user.courses.includes(course))) {
+                const query = Calendar.find();
+                if (course) {
+                    query.where({course});
+                } else {
+                    query.where({
+                        course: {
+                            $in: user.courses
+                        }
+                    });
+                }
+                if (limit) {
+                    query.where({
+                        start: {
+                            $gte: new Date()
+                        }
+                    }).limit(limit);
+                }
+                return query.select({'_id': 0, '__v': 0}).exec();
+            }
+
+            return Promise.resolve([]);
+        }).then((events) => {
+            res.send(events);
+        }).catch((err) => {
+            next(err);
+        });
+    } else {
+        const query = Calendar.find();
+        if (course) {
+            query.where({course});
+        }
+        if (limit) {
+            query.where({
+                start: {
+                    $gte: new Date()
+                }
+            }).limit(limit);
+        }
+        query.select({'_id': 0, '__v': 0}).exec().then((events) => {
+            res.send(events);
+        }).catch((err) => {
+            next(err);
+        });
+    }
 }).post((req, res, next) => {
     if (req.session.role !== 'admin') {
         res.status(401);

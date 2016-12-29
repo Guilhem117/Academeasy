@@ -65,12 +65,17 @@ class Timetable extends Component {
     }
 
     onSelectSlot = (slotInfo) => {
-        console.log(slotInfo);
-        this.props.router.push(`/calendar/new?start=${slotInfo.start.getTime()}&end=${slotInfo.end.getTime()}`);
+        const {role} = localStorage;
+        if (role === 'admin') {
+            this.props.router.push(`/calendar/new?start=${slotInfo.start.getTime()}&end=${slotInfo.end.getTime()}`);
+        }
     }
 
     onSelectEvent = (event) => {
-        this.props.router.push(`/calendar/${event.id}`);
+        const {role} = localStorage;
+        if (role === 'admin') {
+            this.props.router.push(`/calendar/${event.id}`);
+        }
     }
 
     render() {

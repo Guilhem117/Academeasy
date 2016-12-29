@@ -81,7 +81,7 @@ class CourseDetailsNonAdmin extends Component {
     render() {
         const {role, username} = localStorage;
         const canUploadFiles = role === 'teacher' && this.state.teachers.findIndex((teacher) => teacher.username === username) > -1;
-        const nextdates = this.state.nextdates.map((entry) => moment(entry.start).format('MMM Do')).join(' - ');
+        const nextdates = this.state.nextdates.map((entry) => moment(entry.start).format('MMM Do hh:mm a')).join(', ');
         return (
             <Grid className="table-background">
                 <Panel header={`Course ${this.state.course.code}`}></Panel>

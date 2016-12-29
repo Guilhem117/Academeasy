@@ -10,10 +10,10 @@ class NavBar extends Component {
 
         this.state = {
             studentNavigation: [
-                'home', 'courses', 'profile'
+                'home', 'courses', 'profile','calendar'
             ],
             teacherNavigation: [
-                'home', 'courses', 'profile'
+                'home', 'courses', 'profile','calendar'
             ],
             adminNavigation: [
                 'home',
