@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {
     Form,
     Grid,
@@ -186,4 +187,4 @@ StudentDetails.propTypes = {
     onSendPassword: React.PropTypes.func
 };
 
-export default StudentDetails;
+export default withRouter(StudentDetails);

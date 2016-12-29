@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {
     Grid,
     Panel,
@@ -156,4 +157,4 @@ TeacherDetails.propTypes = {
     onSendPassword: React.PropTypes.func
 };
 
-export default TeacherDetails;
+export default withRouter(TeacherDetails);

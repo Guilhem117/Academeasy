@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {Navbar, Nav, NavItem, Button} from 'react-bootstrap';
 
 import UsersStore from './Stores/Users';
@@ -89,4 +90,4 @@ class NavBar extends Component {
     }
 }
 
-export default NavBar;
+export default withRouter(NavBar);

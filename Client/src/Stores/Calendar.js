@@ -1,10 +1,36 @@
 const CalendarStore = {
-    getCalendar: _ => {
+    getCalendar: (maxEntries) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('http://localhost:8081/api/calendar', {
+        const query = maxEntries ? `?count=${maxEntries}` : '';
+
+        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
+    },
+
+    getCalendarForCourse: (courseCode, maxEntries) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const courseQuery = `?course=${courseCode}`
+        const query = maxEntries ? `${courseQuery}&count=${maxEntries}` : courseQuery;
+
+        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers

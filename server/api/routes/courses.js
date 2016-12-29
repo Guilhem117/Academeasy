@@ -26,7 +26,7 @@ router.route('/').get((req, res, next) => {
             }, {
                 label: new RegExp(req.query.search, 'i')
             }
-        ])
+        ]);
     }
 
     query.select(documentSelection).exec().then((courses) => {
@@ -71,8 +71,9 @@ router.route('/:courseCode').get((req, res, next) => {
     });
 }).put((req, res, next) => {
     if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
+        const err = new Error('Admin role required');
+        err.status = 401;
+        next(err);
         return;
     }
 
@@ -95,7 +96,7 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
         const receivedData = [];
         let length = 0;
 
-        file.on('data', function(data) {
+        file.on('data', (data) => {
             receivedData.push(data);
             length += data.length;
         });
@@ -105,8 +106,7 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
         });
     });
 
-    busboy.on('finish', function() {
-        console.log(attachments);
+    busboy.on('finish', () => {
         Course.update({
             code: req.params.courseCode
         }, {

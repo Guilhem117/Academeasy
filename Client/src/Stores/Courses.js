@@ -137,6 +137,27 @@ const CoursesStore = {
         });
     },
 
+    getTeachers: (course) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers,
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
+    },
+
     addAttachments: (courseCode, files) => {
         const data = new FormData()
         let i = 1;

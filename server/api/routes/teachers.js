@@ -19,7 +19,7 @@ router.route('/').get((req, res, next) => {
             }, {
                 lastName: new RegExp(req.query.search, 'i')
             }
-        ])
+        ]);
     }
 
     query.select({'_id': 0, '__v': 0}).exec().then((teachers) => {

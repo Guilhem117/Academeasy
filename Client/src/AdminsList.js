@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {
     Grid,
     Row,
@@ -13,6 +14,7 @@ import {
     ControlLabel
 } from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import ChangePasswordDialog from './ChangePasswordDialog';
 
 import UsersStore from './Stores/Users';
 
@@ -23,7 +25,6 @@ class AdminsList extends Component {
         this.state = {
             admins: [],
             selectedAdmin: '',
-            newpassword: '',
             newusername: '',
             showAddDialog: false
         };
@@ -58,13 +59,13 @@ class AdminsList extends Component {
         this.setState({selectedAdmin: ''});
     }
 
-    onChangePassword = _ => {
+    onChangePassword = (value) => {
         const admin = {
             username: this.state.selectedAdmin,
-            password: this.state.newpassword
+            password: value.newpassword
         };
         UsersStore.updateAdmin(admin).then(_ => {
-            this.setState({selectedAdmin: '', newpassword: ''});
+            this.setState({selectedAdmin: ''});
         });
     }
 
@@ -86,39 +87,6 @@ class AdminsList extends Component {
 
     onRowClick = (row) => {
         this.setState({selectedAdmin: row.username});
-    }
-
-    changePasswordDialog = _ => {
-        return (
-            <Modal.Dialog>
-                <Modal.Header>
-                    <Modal.Title style={{
-                        textAlign: 'center'
-                    }}>Change password</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <Form horizontal>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={3}>
-                                New password
-                            </Col>
-                            <Col sm={9}>
-                                <FormControl type="password" placeholder="Password" value={this.state.newpassword} onChange={this.onChange('newpassword')}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                            <Col smOffset={3} sm={9}>
-                                <ButtonToolbar>
-                                    <Button onClick={this.onChangePassword} disabled={!this.state.newpassword}>Change</Button>
-                                    <Button onClick={this.onCancelPassword}>Cancel</Button>
-                                </ButtonToolbar>
-                            </Col>
-                        </FormGroup>
-                    </Form>
-                </Modal.Body>
-            </Modal.Dialog>
-        );
     }
 
     addAdminDialog = _ => {
@@ -165,6 +133,8 @@ class AdminsList extends Component {
     render() {
         return (
             <Grid className="table-background">
+                {this.state.selectedAdmin && <ChangePasswordDialog onConfirm={this.onChangePassword} onCancel={this.onCancelPassword}/>}
+                {this.state.showAddDialog && this.addAdminDialog()}
                 <Panel header="Admins list">
                     <Row>
                         <BootstrapTable data={this.state.admins} options={{
@@ -178,11 +148,9 @@ class AdminsList extends Component {
                         <Button onClick={this.onDeleteButton}>Delete</Button>
                     </Row>
                 </Panel>
-                {this.state.selectedAdmin && this.changePasswordDialog()}
-                {this.state.showAddDialog && this.addAdminDialog()}
             </Grid>
         );
     }
 }
 
-export default AdminsList;
+export default withRouter(AdminsList);

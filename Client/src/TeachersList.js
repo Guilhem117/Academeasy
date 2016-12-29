@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {Grid, Panel, Row, Button} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
@@ -89,4 +90,4 @@ class TeachersList extends Component {
     }
 }
 
-export default TeachersList;
+export default withRouter(TeachersList);

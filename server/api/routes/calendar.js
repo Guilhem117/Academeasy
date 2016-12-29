@@ -6,7 +6,20 @@ const router = express.Router();
 const Calendar = require('../models/Calendar');
 
 router.route('/').get((req, res, next) => {
-    Calendar.find().select({'_id': 0, '__v': 0}).exec().then((events) => {
+    const query = Calendar.find()
+    const {course, count} = req.query;
+    const limit = parseInt(count, 10);
+    if(course) {
+      query.where({course});
+    }
+    if (limit) {
+        query.where({
+            start: {
+                $gte: new Date()
+            }
+        }).limit(limit);
+    }
+    query.select({'_id': 0, '__v': 0}).exec().then((events) => {
         res.send(events);
     }).catch((err) => {
         next(err);
@@ -35,12 +48,12 @@ router.route('/').get((req, res, next) => {
 
 });
 
-router.route('/:entryId').get((req, res, next) => {
-  Calendar.findOne({id: req.params.entryId}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
-      res.send(entry);
-  }).catch((err) => {
-      next(err);
-  });
+router.route('/entry/:entryId').get((req, res, next) => {
+    Calendar.findOne({id: req.params.entryId}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
+        res.send(entry);
+    }).catch((err) => {
+        next(err);
+    });
 
 }).put((req, res, next) => {
     if (req.session.role !== 'admin') {
@@ -64,7 +77,5 @@ router.route('/:entryId').get((req, res, next) => {
     });
 
 });
-
-
 
 module.exports = router;

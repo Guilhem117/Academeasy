@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withRouter} from 'react-router';
 import {Grid, Panel, Row} from 'react-bootstrap';
 import BigCalendar from 'react-big-calendar';
 import TimetableEdit from './TimetableEdit';
@@ -90,4 +91,4 @@ class Timetable extends Component {
     }
 };
 
-export default Timetable;
+export default withRouter(Timetable);

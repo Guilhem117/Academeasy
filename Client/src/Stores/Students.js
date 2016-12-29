@@ -133,7 +133,7 @@ const StudentsStore = {
 
     },
 
-    changePassword: (username, password) => {
+    changePassword: (username, password, currentpassword) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
@@ -142,7 +142,7 @@ const StudentsStore = {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify({password})
+            body: JSON.stringify({password,currentpassword})
         });
 
         return fetch(request).then(resp => {

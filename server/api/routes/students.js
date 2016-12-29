@@ -20,7 +20,7 @@ router.route('/').get((req, res, next) => {
             }, {
                 lastName: new RegExp(req.query.search, 'i')
             }
-        ])
+        ]);
     }
 
     query.select({'_id': 0, '__v': 0, 'avatar': 0}).exec().then((students) => {
@@ -118,13 +118,23 @@ router.route('/:username/newpassword').get((req, res, next) => {
             next(err);
             return;
         }
-        const {password} = req.body;
-        User.findOneAndUpdate({
+        const {password, currentpassword} = req.body;
+        const search = {
             username: req.params.username
-        }, {$set: {
+        };
+        if (req.session.role !== 'admin') {
+            search.password = currentpassword;
+        }
+        User.findOneAndUpdate(search, {$set: {
                 password
-            }}).exec().then((student) => {
-            res.send({message: 'Password changed'});
+            }}).exec().then((result) => {
+            if (result) {
+                res.send({message: 'Password changed'});
+            } else {
+                const err = new Error('Current password invalid');
+                err.status = 401;
+                next(err);
+            }
         }).catch((err) => {
             next(err);
         });

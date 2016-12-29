@@ -12,7 +12,7 @@ import {
     FormControl,
     Thumbnail
 } from 'react-bootstrap';
-
+import ChangePasswordDialog from './ChangePasswordDialog';
 import StudentsStore from './Stores/Students';
 
 class ProfileDetails extends Component {
@@ -20,7 +20,8 @@ class ProfileDetails extends Component {
         super(props);
 
         this.state = {
-            student: {}
+            student: {},
+            displayPasswordDialog: false
         };
 
     }
@@ -64,6 +65,22 @@ class ProfileDetails extends Component {
         }
     }
 
+    onChangePassword = _ => {
+        this.setState({displayPasswordDialog: true});
+    }
+
+    onChangePasswordConfirm = (form) => {
+        const {currentpassword, newpassword} = form;
+        const {username} = localStorage;
+        StudentsStore.changePassword(username, newpassword, currentpassword).then(_ => {
+            this.setState({displayPasswordDialog: false});
+        });
+    }
+
+    onChangePasswordCancel = _ => {
+        this.setState({displayPasswordDialog: false});
+    }
+
     onUpdate = _ => {
         StudentsStore.updateStudent(this.state.student).then(_ => {});
     }
@@ -71,6 +88,7 @@ class ProfileDetails extends Component {
     render() {
         return (
             <Grid className="table-background">
+                {this.state.displayPasswordDialog && <ChangePasswordDialog confirm current onCancel={this.onChangePasswordCancel} onConfirm={this.onChangePasswordConfirm}/>}
                 <Panel header="My profile">
                     <Row>
                         <Col md={8}>
@@ -103,6 +121,7 @@ class ProfileDetails extends Component {
                                     <Col smOffset={3} sm={8}>
                                         <ButtonToolbar>
                                             <Button onClick={this.onUpdate}>Update</Button>
+                                            <Button onClick={this.onChangePassword}>Change password</Button>
                                         </ButtonToolbar>
                                     </Col>
                                 </FormGroup>
