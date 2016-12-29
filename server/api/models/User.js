@@ -20,10 +20,9 @@ const UserSchema = new Schema({
 
 UserSchema.statics.loginUser = (username, password) => {
     return User.findOne({username: username}).exec().then((user) => {
-        return {
-            success: !!user && user.password === password,
-            role: user && user.role
-        };
+        const success = user && user.password && user.password === password;
+        const role = success && user.role;
+        return {success, role};
     });
 };
 

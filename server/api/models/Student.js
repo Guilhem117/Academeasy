@@ -23,6 +23,9 @@ const StudentSchema = new Schema({
         type: String,
         index: true
     },
+    avatar: {
+        type: String
+    },
     courses: [
         {
             type: String

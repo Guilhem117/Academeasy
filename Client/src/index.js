@@ -13,6 +13,7 @@ import TeacherDetails from './TeacherDetails';
 import StudentsList from './StudentsList';
 import StudentDetails from './StudentDetails';
 import Timetable from './Timetable';
+import AdminsList from './AdminsList';
 
 import App from './App';
 
@@ -45,6 +46,7 @@ ReactDOM.render(
         <Route path="profile" components={{navBar: withRouter(NavBar), content: ProfileDetails}}/>
         <Route path="calendar" components={{navBar: withRouter(NavBar), content: withRouter(Timetable)}}/>
         <Route path="calendar/:eventId" components={{navBar: withRouter(NavBar), content: withRouter(Timetable)}}/>
+        <Route path="admin" components={{navBar: withRouter(NavBar), content: withRouter(AdminsList)}}/>
     </Route>
     <Route path="/login" component={LoginDialog}/>
 </Router>, document.getElementById('root'));

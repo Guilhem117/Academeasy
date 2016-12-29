@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {Navbar, Nav, NavItem, Button} from 'react-bootstrap';
 
+import UsersStore from './Stores/Users';
+
 class NavBar extends Component {
     constructor(props) {
         super(props);
@@ -13,7 +15,12 @@ class NavBar extends Component {
                 'home', 'courses', 'profile'
             ],
             adminNavigation: [
-                'home', 'courses', 'students', 'teachers', 'calendar'
+                'home',
+                'courses',
+                'students',
+                'teachers',
+                'calendar',
+                'admin'
             ],
 
             pagesNames: {
@@ -22,7 +29,8 @@ class NavBar extends Component {
                 students: 'Students',
                 teachers: 'Teachers',
                 profile: 'Profile',
-                calendar: 'Calendar'
+                calendar: 'Calendar',
+                admin: 'Admin'
             }
         };
     }
@@ -38,8 +46,10 @@ class NavBar extends Component {
     }
 
     logout = () => {
-      localStorage.clear();
-      location.reload();
+        UsersStore.logoutUser(localStorage.username).then(_ => {
+            localStorage.clear();
+            location.reload();
+        });
     }
 
     render() {

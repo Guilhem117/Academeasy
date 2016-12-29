@@ -29,46 +29,32 @@ router.route('/').get((req, res, next) => {
     });
 }).post((req, res, next) => {
     if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
+        const err = new Error('Admin role required');
+        err.status = 401;
+        next(err);
         return;
     }
 
     if (!req.body.username) {
-        res.status(400);
-        res.send('Invalid arguments');
+        const err = new Error('Invalid arguments');
+        err.status = 400;
+        next(err);
         return;
     }
-    var teacher = new Teacher(req.body);
 
     // save the user and check for errors
-    teacher.save((err) => {
-        if (err) {
-            if (err.code === 11000) {
-                res.status(409);
-                res.send('A teacher with same login exists');
-            } else {
-                next(err);
-            }
-            return;
+    Teacher.create(req.body).then(_ => {
+        return User.create({username: req.body.username, role: 'teacher'})
+    }).then(_ => {
+        res.send({message: 'Teacher created!'});
+    }).catch((err) => {
+        if (err.code === 11000) {
+            const err2 = new Error('A user with same login exists');
+            err2.status = 409;
+            next(err2);
+        } else {
+            next(err);
         }
-        var user = new User({username: req.body.username, role: 'teacher'}); // create a new instance of the user model
-
-        // save the user and check for errors
-        user.save((err) => {
-            if (err) {
-                if (err.code === 11000) {
-                    res.status(409);
-                    res.send('A user with same login exists');
-                } else {
-                    next(err);
-                }
-                return;
-            }
-
-            res.send({message: 'Teacher created!'});
-        });
-
     });
 
 });
@@ -89,8 +75,9 @@ router.route('/:username').get((req, res, next) => {
             next(err);
         });
     } else {
-        res.status(401);
-        res.send('Admin role required or update yourself only');
+        const err = new Error('Admin role required or update yourself only');
+        err.status = 401;
+        next(err);
     }
 });
 

@@ -88,11 +88,11 @@ class StudentDetails extends Component {
 
     onChange = (valueName) => {
         return (event) => {
-            const value = event.target.value;
+            const {value} = event.target;
             this.setState((prevState, props) => {
-              const student = prevState.student;
-              student[valueName] = value;
-              return {student};
+                const student = prevState.student;
+                student[valueName] = value;
+                return {student};
             });
         }
     }
@@ -111,9 +111,12 @@ class StudentDetails extends Component {
     }
 
     sendPassword = () => {
-        if (this.props.onSendPassword) {
-            this.props.onSendPassword(this.state);
-        }
+        const {studentId} = this.props.params;
+
+        StudentsStore.newPassword(studentId).then((response) => {
+            const {password} = response;
+            alert(`New Password: ${password}`);
+        });
     }
 
     render() {

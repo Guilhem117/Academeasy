@@ -12,7 +12,8 @@
     "mongoose": "^4.7.4",
     "morgan": "^1.7.0",
     "node-uuid": "^1.4.7",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "password-generator": "^2.1.0"
   },
   "devDependencies": {},
   "scripts": {

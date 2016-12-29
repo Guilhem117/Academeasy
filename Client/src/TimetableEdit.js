@@ -33,7 +33,7 @@ class TimetableEdit extends Component {
             entryId === 'new'
                 ? {
                     start: parseInt(this.props.location.query.start, 10),
-                    end:  parseInt(this.props.location.query.end, 10),
+                    end: parseInt(this.props.location.query.end, 10)
                 }
                 : CalendarStore.getEntry(entryId),
             CoursesStore.getCourses(),
@@ -59,8 +59,8 @@ class TimetableEdit extends Component {
             Promise.all([
                 entryId === 'new'
                     ? {
-                      start: parseInt(this.props.location.query.start, 10),
-                      end:  parseInt(this.props.location.query.end, 10),
+                        start: parseInt(this.props.location.query.start, 10),
+                        end: parseInt(this.props.location.query.end, 10)
                     }
                     : CalendarStore.getEntry(entryId),
                 CoursesStore.getCourses(),
@@ -85,7 +85,7 @@ class TimetableEdit extends Component {
         return (value) => {
             const newValue = value.value;
             this.setState((prevState, props) => {
-                const entry = prevState.entry;
+                const {entry} = prevState;
                 entry[which] = newValue || '';
                 return {entry};
             });
@@ -95,7 +95,7 @@ class TimetableEdit extends Component {
     onDateChange = (which) => {
         return (newDate) => {
             this.setState((prevState, props) => {
-                const entry = prevState.entry;
+                const {entry} = prevState;
                 entry[which] = newDate.toDate();
                 return {entry};
             });

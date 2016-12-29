@@ -36,14 +36,16 @@ router.route('/').get((req, res, next) => {
     });
 }).post((req, res, next) => {
     if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
+        const err = new Error('Admin role required');
+        err.status = 401;
+        next(err);
         return;
     }
 
     if (!req.body.code) {
-        res.status(400);
-        res.send('Invalid arguments');
+        const err = new Error('Invalid arguments');
+        err.status = 400;
+        next(err);
         return;
     }
 
@@ -51,8 +53,9 @@ router.route('/').get((req, res, next) => {
         res.send({message: 'Course created!'});
     }).catch((err) => {
         if (err.code === 11000) {
-            res.status(409);
-            res.send('A course with same code exists');
+            const err2 = new Error('A course with same code exists');
+            err2.status = 409;
+            next(err2);
         } else {
             next(err);
         }

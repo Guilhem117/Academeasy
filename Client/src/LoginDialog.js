@@ -24,9 +24,11 @@ class LoginDialog extends Component {
     }
 
     onLogin = (event) => {
-        UsersStore.loginUser(this.state.username, this.state.password).then((loginAction) => {
+        const username = this.state.username.toLowerCase();
+        UsersStore.loginUser(username, this.state.password).then((loginAction) => {
             if (loginAction.success) {
                 localStorage.role = loginAction.role;
+                localStorage.username = username;
                 if (location.state && location.state.nextPathname) {
                     this.props.router.replace(location.state.nextPathname);
                 } else {
@@ -38,7 +40,8 @@ class LoginDialog extends Component {
 
     onChange = (valueName) => {
         return (event) => {
-            this.setState({[valueName]: event.target.value});
+            const {value} = event.target;
+            this.setState({[valueName]: value});
         }
     }
 

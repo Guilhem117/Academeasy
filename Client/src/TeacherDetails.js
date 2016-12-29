@@ -67,15 +67,14 @@ class TeacherDetails extends Component {
 
     onChange = (valueName) => {
         return (event) => {
-            const value = event.target.value;
+            const {value} = event.target;
             this.setState((prevState, props) => {
-              const teacher = prevState.teacher;
-              teacher[valueName] = value;
-              return {teacher};
+                const teacher = prevState.teacher;
+                teacher[valueName] = value;
+                return {teacher};
             });
         }
     }
-
 
     onUpdate = () => {
         const {teacherId} = this.props.params;
@@ -97,7 +96,7 @@ class TeacherDetails extends Component {
     }
 
     render() {
-      const {teacherId} = this.props.params;
+        const {teacherId} = this.props.params;
 
         return (
             <Grid className="table-background">

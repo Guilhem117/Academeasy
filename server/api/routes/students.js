@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const generatePassword = require('password-generator');
 
 const Student = require('../models/Student');
 const User = require('../models/User');
@@ -22,32 +23,35 @@ router.route('/').get((req, res, next) => {
         ])
     }
 
-    query.select({'_id': 0, '__v': 0}).exec().then((students) => {
+    query.select({'_id': 0, '__v': 0, 'avatar': 0}).exec().then((students) => {
         res.send(students);
     }).catch((err) => {
         next(err);
     });
 }).post((req, res, next) => {
     if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
+        const err = new Error('Admin role required');
+        err.status = 401;
+        next(err);
         return;
     }
 
     if (!req.body.username) {
-        res.status(400);
-        res.send('Invalid arguments');
+        const err = new Error('Invalid arguments');
+        err.status = 400;
+        next(err);
         return;
     }
 
     Student.create(req.body).then(_ => {
-        return User.create({username: req.body.username, role: 'student'}); // create a new instance of the user model
+        return User.create({username: req.body.username, role: 'student'});
     }).then(_ => {
         res.send({message: 'Student created!'});
     }).catch((err) => {
         if (err.code === 11000) {
-            res.status(409);
-            res.send('A user with same login exists');
+            const err2 = new Error('A user with same login exists');
+            err2.status = 409;
+            next(err2);
         } else {
             next(err);
         }
@@ -56,13 +60,22 @@ router.route('/').get((req, res, next) => {
 });
 
 router.route('/:username').get((req, res, next) => {
-    Student.findOne({username: req.params.username}).select({'_id': 0, '__v': 0}).exec().then((student) => {
-        res.send(student);
-    }).catch((err) => {
+    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+
+        Student.findOne({username: req.params.username}).select({'_id': 0, '__v': 0}).exec().then((student) => {
+            res.send(student);
+        }).catch((err) => {
+            next(err);
+        });
+    } else {
+        const err = new Error('Admin role required or yourself only');
+        err.status = 401;
         next(err);
-    });
+    }
+
 }).put((req, res, next) => {
     if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+
         Student.findOneAndUpdate({
             username: req.params.username
         }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((student) => {
@@ -71,9 +84,57 @@ router.route('/:username').get((req, res, next) => {
             next(err);
         });
     } else {
-        res.status(401);
-        res.send('Admin role required or update yourself only');
+        const err = new Error('Admin role required or yourself only');
+        err.status = 401;
+        next(err);
     }
+
+});
+
+router.route('/:username/newpassword').get((req, res, next) => {
+    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+        const password = generatePassword();
+        User.findOneAndUpdate({
+            username: req.params.username
+        }, {$set: {
+                password
+            }}).exec().then((student) => {
+            res.send({password});
+        }).catch((err) => {
+            next(err);
+        });
+
+    } else {
+        const err = new Error('Admin role required or update yourself only');
+        err.status = 401;
+        next(err);
+    }
+
+}).put((req, res, next) => {
+    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+        if (!req.body.password) {
+            const err = new Error('Invalid arguments');
+            err.status = 400;
+            next(err);
+            return;
+        }
+        const {password} = req.body;
+        User.findOneAndUpdate({
+            username: req.params.username
+        }, {$set: {
+                password
+            }}).exec().then((student) => {
+            res.send({message: 'Password changed'});
+        }).catch((err) => {
+            next(err);
+        });
+
+    } else {
+        const err = new Error('Admin role required or update yourself only');
+        err.status = 401;
+        next(err);
+    }
+
 });
 
 module.exports = router;
