@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Navbar, Nav, NavItem} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, Button} from 'react-bootstrap';
 
 class NavBar extends Component {
     constructor(props) {
@@ -37,6 +37,11 @@ class NavBar extends Component {
         );
     }
 
+    logout = () => {
+      localStorage.clear();
+      location.reload();
+    }
+
     render() {
         let navigation;
         switch (localStorage.role) {
@@ -50,13 +55,7 @@ class NavBar extends Component {
                 navigation = this.getNavigation(this.state.studentNavigation);
                 break;
             default:
-                navigation = (
-                    <Navbar.Collapse>
-                        <Navbar.Text pullRight>
-                            AcademEasy
-                        </Navbar.Text>
-                    </Navbar.Collapse>
-                )
+                navigation = <Nav/>
         }
         return (
             <Navbar>
@@ -68,7 +67,12 @@ class NavBar extends Component {
                     </Navbar.Brand>
                     <Navbar.Toggle/>
                 </Navbar.Header>
-                {navigation}
+                <Navbar.Collapse>
+                    {navigation}
+                    <Navbar.Text pullRight>
+                        {localStorage.role && <Button bsStyle="link" bsSize="xsmall" onClick={this.logout}>Logout</Button>}
+                    </Navbar.Text>
+                </Navbar.Collapse>
             </Navbar>
 
         );
