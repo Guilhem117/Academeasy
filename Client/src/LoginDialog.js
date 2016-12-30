@@ -29,8 +29,8 @@ class LoginDialog extends Component {
         const {password, remember} = this.state;
         UsersStore.loginUser(username, password, remember).then((loginAction) => {
             if (loginAction.success) {
-                localStorage.role = loginAction.role;
-                localStorage.username = username;
+                sessionStorage.role = loginAction.role;
+                sessionStorage.username = username;
                 if (location.state && location.state.nextPathname) {
                     this.props.router.replace(location.state.nextPathname);
                 } else {

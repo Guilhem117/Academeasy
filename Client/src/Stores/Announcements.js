@@ -1,10 +1,12 @@
-const UsersStore = {
-    getAdmins: _ => {
+const AnnouncementsStore = {
+    getAnnouncements: (maxEntries) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/admins', {
+        const query = maxEntries ? `?count=${maxEntries}` : '';
+
+        const request = new Request(`/api/announcements${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -18,15 +20,17 @@ const UsersStore = {
             }
 
         });
-
     },
 
-    getSession: _ => {
+    getAnnouncementsForCourse: (courseCode, maxEntries) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/session', {
+        const courseQuery = `?course=${courseCode}`
+        const query = maxEntries ? `${courseQuery}&count=${maxEntries}` : courseQuery;
+
+        const request = new Request(`/api/announcements${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -40,19 +44,39 @@ const UsersStore = {
             }
 
         });
-
     },
 
-    updateAdmin: (admin) => {
+    getAnnounce: (announceId) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/users/admins/${admin.username}`, {
+        const request = new Request(`/api/announcements/${announceId}`, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                return Promise.reject();
+            }
+
+        });
+    },
+
+    updateAnnounce: (announce) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
+        const request = new Request(`/api/announcements/${announce.id}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify(admin)
+            body: JSON.stringify(announce)
         });
 
         return fetch(request).then(resp => {
@@ -65,37 +89,15 @@ const UsersStore = {
         });
     },
 
-    addAdmin: (admin) => {
+    removeAnnounce: (announceId) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/users/admins`, {
+        const request = new Request(`/api/announcements/${announceId}`, {
             credentials: 'include',
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(admin)
-        });
-
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-        });
-    },
-
-    loginUser: (username, password, remember) => {
-        const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-
-        const request = new Request('/api/users/login', {
-            credentials: 'include',
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({username, password, remember})
+            method: 'DELETE',
+            headers: headers
         });
 
         return fetch(request).then(resp => {
@@ -108,16 +110,16 @@ const UsersStore = {
         });
     },
 
-    logoutUser: (username) => {
+    addAnnounce: (announce) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/logout', {
+        const request = new Request(`/api/announcements`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
-            body: JSON.stringify({username})
+            body: JSON.stringify(announce)
         });
 
         return fetch(request).then(resp => {
@@ -129,6 +131,6 @@ const UsersStore = {
 
         });
     }
-};
+}
 
-export default UsersStore;
+export default AnnouncementsStore;

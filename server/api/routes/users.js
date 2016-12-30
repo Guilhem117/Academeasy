@@ -31,6 +31,11 @@ router.route('/logout').post((req, res, next) => {
     }
 });
 
+router.route('/session').get((req, res, next) => {
+    const {role, username} = req.session;
+    res.send({role, username});
+});
+
 router.route('/admins').get((req, res, next) => {
     if (req.session.role === 'admin') {
         User.find({role: 'admin'}).select({'username': 1}).exec().then((admins) => {

@@ -6,7 +6,7 @@ import CoursesListNonAdmin from './CoursesListNonAdmin';
 class CoursesList extends Component {
 
     render() {
-        const {role} = localStorage;
+        const {role} = sessionStorage;
 
         let component = null;
         switch (role) {

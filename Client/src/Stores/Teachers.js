@@ -5,8 +5,8 @@ const TeachersStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `http://localhost:8081/api/teachers?search=${search}`
-            : 'http://localhost:8081/api/teachers';
+            ? `/api/teachers?search=${search}`
+            : '/api/teachers';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -31,7 +31,7 @@ const TeachersStore = {
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
 
-      const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+      const request = new Request(`/api/teachers/${username}`, {
           credentials: 'include',
           method: 'GET',
           headers: headers
@@ -52,7 +52,7 @@ const TeachersStore = {
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
 
-      const request = new Request(`http://localhost:8081/api/teachers/${teacher.username}`, {
+      const request = new Request(`/api/teachers/${teacher.username}`, {
           credentials: 'include',
           method: 'PUT',
           headers: headers,
@@ -74,7 +74,7 @@ const TeachersStore = {
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
 
-      const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+      const request = new Request(`/api/teachers/${username}`, {
           credentials: 'include',
           method: 'DELETE',
           headers: headers,
@@ -95,7 +95,7 @@ const TeachersStore = {
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
 
-      const request = new Request(`http://localhost:8081/api/teachers`, {
+      const request = new Request(`/api/teachers`, {
           credentials: 'include',
           method: 'POST',
           headers: headers,

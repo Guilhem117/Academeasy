@@ -103,50 +103,50 @@ class TeacherDetails extends Component {
             <Grid className="table-background">
                 <Panel header={this.state.teacher.username
                     ? `Teacher ${this.state.teacher.username}`
-                    : 'New teacher'}></Panel>
-
-                <Form horizontal>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Login</Col>
-                        <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('username')} value={this.state.teacher.username || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Courses</Col>
-                        <Col sm={10}>
-                            <Select multi options={this.state.courses} value={this.state.teacher.courses || []} onChange={this.onChangeCourses}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>First Name</Col>
-                        <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.teacher.firstName || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
-                        <Col sm={10}>
-                            <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.teacher.lastName || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>Email</Col>
-                        <Col sm={10}>
-                            <FormControl type="email" onChange={this.onChange('email')} value={this.state.teacher.email || ''}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col smOffset={2} sm={10}>
-                            <ButtonToolbar>
-                                <Button onClick={this.onUpdate} disabled={!this.state.teacher.username}>{teacherId === 'new'
-                                        ? 'Add'
-                                        : 'Update'}</Button>
-                                <Button onClick={this.sendPassword} disabled={!this.state.teacher.email}>Send Password</Button>
-                            </ButtonToolbar>
-                        </Col>
-                    </FormGroup>
-                </Form>
+                    : 'New teacher'}>
+                    <Form horizontal>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>Login</Col>
+                            <Col sm={10}>
+                                <FormControl type="text" onChange={this.onChange('username')} value={this.state.teacher.username || ''}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>Courses</Col>
+                            <Col sm={10}>
+                                <Select multi options={this.state.courses} value={this.state.teacher.courses || []} onChange={this.onChangeCourses}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>First Name</Col>
+                            <Col sm={10}>
+                                <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.teacher.firstName || ''}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>Last Name</Col>
+                            <Col sm={10}>
+                                <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.teacher.lastName || ''}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>Email</Col>
+                            <Col sm={10}>
+                                <FormControl type="email" onChange={this.onChange('email')} value={this.state.teacher.email || ''}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col smOffset={2} sm={10}>
+                                <ButtonToolbar>
+                                    <Button onClick={this.onUpdate} disabled={!this.state.teacher.username}>{teacherId === 'new'
+                                            ? 'Add'
+                                            : 'Update'}</Button>
+                                    <Button onClick={this.sendPassword} disabled={!this.state.teacher.email}>Send Password</Button>
+                                </ButtonToolbar>
+                            </Col>
+                        </FormGroup>
+                    </Form>
+                </Panel>
             </Grid>
         );
     }

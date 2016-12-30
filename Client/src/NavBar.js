@@ -21,6 +21,7 @@ class NavBar extends Component {
                 'students',
                 'teachers',
                 'calendar',
+                'announcements',
                 'admin'
             ],
 
@@ -31,6 +32,7 @@ class NavBar extends Component {
                 teachers: 'Teachers',
                 profile: 'Profile',
                 calendar: 'Calendar',
+                announcements: 'Announcement',
                 admin: 'Admin'
             }
         };
@@ -47,18 +49,18 @@ class NavBar extends Component {
     }
 
     logout = () => {
-        UsersStore.logoutUser(localStorage.username).then(_ => {
-            localStorage.clear();
+        UsersStore.logoutUser(sessionStorage.username).then(_ => {
+            sessionStorage.clear();
             location.reload();
         }).catch(_ => {
-            localStorage.clear();
+            sessionStorage.clear();
             location.reload();
         });
     }
 
     render() {
         let navigation;
-        switch (localStorage.role) {
+        switch (sessionStorage.role) {
             case 'admin':
                 navigation = this.getNavigation(this.state.adminNavigation);
                 break;
@@ -72,7 +74,7 @@ class NavBar extends Component {
                 navigation = <Nav/>
         }
 
-        const {username} = localStorage;
+        const {username} = sessionStorage;
 
         return (
             <Navbar>

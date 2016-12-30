@@ -6,8 +6,8 @@ const YearsStore = {
       headers.append('Accept', 'application/json');
 
       const url = search
-          ? `http://localhost:8081/api/years?search=${search}`
-          : 'http://localhost:8081/api/years';
+          ? `/api/years?search=${search}`
+          : '/api/years';
 
       const request = new Request(url, {
           credentials: 'include',

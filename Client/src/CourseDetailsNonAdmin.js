@@ -79,7 +79,7 @@ class CourseDetailsNonAdmin extends Component {
     }
 
     render() {
-        const {role, username} = localStorage;
+        const {role, username} = sessionStorage;
         const canUploadFiles = role === 'teacher' && this.state.teachers.findIndex((teacher) => teacher.username === username) > -1;
         const nextdates = this.state.nextdates.map((entry) => moment(entry.start).format('MMM Do hh:mm a')).join(', ');
         return (

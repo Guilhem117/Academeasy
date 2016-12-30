@@ -5,8 +5,8 @@ const StudentsStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `http://localhost:8081/api/students?search=${search}`
-            : 'http://localhost:8081/api/students';
+            ? `/api/students?search=${search}`
+            : '/api/students';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -30,7 +30,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students/${username}`, {
+        const request = new Request(`/api/students/${username}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -51,7 +51,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students/${student.username}`, {
+        const request = new Request(`/api/students/${student.username}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
@@ -73,7 +73,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students/${username}`, {
+        const request = new Request(`/api/students/${username}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
@@ -94,7 +94,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students`, {
+        const request = new Request(`/api/students`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
@@ -116,7 +116,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students/${username}/newpassword`, {
+        const request = new Request(`/api/students/${username}/newpassword`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -138,7 +138,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/students/${username}/newpassword`, {
+        const request = new Request(`/api/students/${username}/newpassword`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,

@@ -28,7 +28,7 @@ class ProfileDetails extends Component {
     }
 
     componentWillMount = () => {
-        const {role, username} = localStorage;
+        const {role, username} = sessionStorage;
         switch (role) {
             case 'student':
                 StudentsStore.getStudent(username).then((student) => {
@@ -80,7 +80,7 @@ class ProfileDetails extends Component {
 
     onChangePasswordConfirm = (form) => {
         const {currentpassword, newpassword} = form;
-        const {username} = localStorage;
+        const {username} = sessionStorage;
         StudentsStore.changePassword(username, newpassword, currentpassword).then(_ => {
             this.setState({displayPasswordDialog: false});
         });
@@ -91,7 +91,7 @@ class ProfileDetails extends Component {
     }
 
     onUpdate = _ => {
-        const {role} = localStorage;
+        const {role} = sessionStorage;
         switch (role) {
             case 'student':
                 StudentsStore.updateStudent(this.state.profile).then(_ => {});

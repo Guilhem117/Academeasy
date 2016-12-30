@@ -13,7 +13,6 @@ router.route('/').get((req, res, next) => {
     const limit = parseInt(count, 10);
 
     if (role !== 'admin') {
-        const {username} = req.session;
         let model = null;
         switch (role) {
             case 'teacher':

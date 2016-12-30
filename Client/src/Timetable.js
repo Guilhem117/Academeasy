@@ -18,7 +18,7 @@ class Timetable extends Component {
         this.state = {
             events: [],
             courses: [],
-            calendarView: localStorage.calendarView || 'month'
+            calendarView: sessionStorage.calendarView || 'month'
         }
     }
 
@@ -40,7 +40,7 @@ class Timetable extends Component {
     }
 
     onCalendarView = (view) => {
-        localStorage.calendarView = view;
+        sessionStorage.calendarView = view;
         this.setState({calendarView: view});
     }
 
@@ -65,14 +65,14 @@ class Timetable extends Component {
     }
 
     onSelectSlot = (slotInfo) => {
-        const {role} = localStorage;
+        const {role} = sessionStorage;
         if (role === 'admin') {
             this.props.router.push(`/calendar/new?start=${slotInfo.start.getTime()}&end=${slotInfo.end.getTime()}`);
         }
     }
 
     onSelectEvent = (event) => {
-        const {role} = localStorage;
+        const {role} = sessionStorage;
         if (role === 'admin') {
             this.props.router.push(`/calendar/${event.id}`);
         }

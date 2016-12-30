@@ -5,8 +5,8 @@ const CoursesStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `http://localhost:8081/api/courses?search=${search}`
-            : 'http://localhost:8081/api/courses';
+            ? `/api/courses?search=${search}`
+            : '/api/courses';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -30,7 +30,7 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/courses/${courseCode}`, {
+        const request = new Request(`/api/courses/${courseCode}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -51,7 +51,7 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/courses/${course.code}`, {
+        const request = new Request(`/api/courses/${course.code}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
@@ -73,7 +73,7 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/courses/${courseCode}`, {
+        const request = new Request(`/api/courses/${courseCode}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
@@ -94,7 +94,7 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/courses`, {
+        const request = new Request(`/api/courses`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
@@ -120,7 +120,7 @@ const CoursesStore = {
             teachers: Array.prototype.join.call(usernames, ',')
         };
 
-        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
+        const request = new Request(`/api/courses/${course}/teachers`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
@@ -142,7 +142,7 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
+        const request = new Request(`/api/courses/${course}/teachers`, {
             credentials: 'include',
             method: 'GET',
             headers: headers,
@@ -166,7 +166,7 @@ const CoursesStore = {
             i++;
         });
 
-        const request = new Request(`http://localhost:8081/api/courses/${courseCode}/attachment`, {
+        const request = new Request(`/api/courses/${courseCode}/attachment`, {
             credentials: 'include',
             method: 'POST',
             body: data
@@ -182,7 +182,7 @@ const CoursesStore = {
     },
 
     getAttachmentURL: (courseCode, fileName) => {
-      return `http://localhost:8081/api/courses/${courseCode}/attachment/${fileName}`;
+      return `/api/courses/${courseCode}/attachment/${fileName}`;
     }
 }
 

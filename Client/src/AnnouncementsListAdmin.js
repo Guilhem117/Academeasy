@@ -2,14 +2,15 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router';
 import {Grid, Row, Panel, Button} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import moment from 'moment';
 
-import CoursesStore from './Stores/Courses';
+import AnnouncementsStore from './Stores/Announcements';
 
-class CoursesListAdmin extends Component {
+class AnnouncementsListAdmin extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          courses: [],
+          announcements: [],
           selected: []
         };
 
@@ -23,8 +24,14 @@ class CoursesListAdmin extends Component {
     }
 
     componentWillMount() {
-      CoursesStore.getCourses().then((courses) => {
-        this.setState({courses});
+      AnnouncementsStore.getAnnouncements().then((announcements) => {
+        this.setState({announcements});
+      });
+    }
+
+    componentWillReceiveProps() {
+      AnnouncementsStore.getAnnouncements().then((announcements) => {
+        this.setState({announcements});
       });
     }
 
@@ -33,32 +40,32 @@ class CoursesListAdmin extends Component {
             this.setState({
                 selected: [
                     ...this.state.selected,
-                    row.code
+                    row.id
                 ]
             });
         } else {
             this.setState({
-                selected: this.state.selected.filter(it => it !== row.code)
+                selected: this.state.selected.filter(it => it !== row.id)
             });
         }
     }
 
     onRowClick = (row) => {
-        this.props.router.push(`/course/${row.code}`);
+        this.props.router.push(`/announcement/${row.id}`);
     }
 
     onDelete = () => {
     }
 
     onAdd = () => {
-        this.props.router.push('/course/new');
+        this.props.router.push('/announcement/new');
     }
 
 
     onSelectAll = (isSelected, rows) => {
         if (isSelected) {
             this.setState({
-                selected: rows.map((row) => row.code)
+                selected: rows.map((row) => row.id)
             });
         } else {
             this.setState({selected: []});
@@ -69,14 +76,18 @@ class CoursesListAdmin extends Component {
     render() {
         return (
           <Grid className="table-background">
-              <Panel header="Courses list">
+              <Panel header="Announcements list">
                   <Row>
-                      <BootstrapTable data={this.state.courses} options={{
+                      <BootstrapTable data={this.state.announcements} options={{
                           onRowClick: this.onRowClick,
                           onSearchChange: this.onSearchChange
                       }} remote selectRow={this.selectRowProp} search striped hover>
-                          <TableHeaderColumn isKey dataField='code'>Code</TableHeaderColumn>
-                          <TableHeaderColumn dataField='label'>Label</TableHeaderColumn>
+                          <TableHeaderColumn isKey dataField='id' hidden>#</TableHeaderColumn>
+                          <TableHeaderColumn dataField='start' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>Start</TableHeaderColumn>
+                          <TableHeaderColumn dataField='end' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>End</TableHeaderColumn>
+                          <TableHeaderColumn dataField='text'>Text</TableHeaderColumn>
+                          <TableHeaderColumn dataField='courses' width='100'>Courses</TableHeaderColumn>
+                          <TableHeaderColumn dataField='teachers' width='100'>Teachers</TableHeaderColumn>
                       </BootstrapTable>
                   </Row>
                   <Row>
@@ -90,4 +101,4 @@ class CoursesListAdmin extends Component {
     }
 }
 
-export default withRouter(CoursesListAdmin);
+export default withRouter(AnnouncementsListAdmin);

@@ -22,6 +22,7 @@ router.use('/students', require('./routes/students'));
 router.use('/teachers', require('./routes/teachers'));
 router.use('/years', require('./routes/years'));
 router.use('/calendar', require('./routes/calendar'));
+router.use('/announcements', require('./routes/announcements'));
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {

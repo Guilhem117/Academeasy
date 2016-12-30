@@ -6,7 +6,7 @@ const CalendarStore = {
 
         const query = maxEntries ? `?count=${maxEntries}` : '';
 
-        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
+        const request = new Request(`/api/calendar${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -30,7 +30,7 @@ const CalendarStore = {
         const courseQuery = `?course=${courseCode}`
         const query = maxEntries ? `${courseQuery}&count=${maxEntries}` : courseQuery;
 
-        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
+        const request = new Request(`/api/calendar${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -51,7 +51,7 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
+        const request = new Request(`/api/calendar/${entryId}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
@@ -72,7 +72,7 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/calendar/${entry.id}`, {
+        const request = new Request(`/api/calendar/${entry.id}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
@@ -94,7 +94,7 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
+        const request = new Request(`/api/calendar/${entryId}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
@@ -115,7 +115,7 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`http://localhost:8081/api/calendar`, {
+        const request = new Request(`/api/calendar`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
