@@ -5,8 +5,6 @@ const router = express.Router();
 const Teacher = require('../models/Teacher');
 const User = require('../models/User');
 
-// on routes that end in /course
-// ----------------------------------------------------
 router.route('/').get((req, res, next) => {
     const query = Teacher.find();
 
@@ -66,7 +64,7 @@ router.route('/:username').get((req, res, next) => {
         next(err);
     });
 }).put((req, res, next) => {
-    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+    if ((req.session.role === 'teacher' && req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
         Teacher.findOneAndUpdate({
             username: req.params.username
         }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((teacher) => {

@@ -5,9 +5,12 @@ const router = express.Router();
 const User = require('../models/User');
 
 router.route('/login').post((req, res, next) => {
-    const {username, password} = req.body;
+    const {username, password, remember} = req.body;
     User.loginUser(username, password).then((response) => {
         if (response.role) {
+            if (!remember) {
+                req.sessionOptions.maxAge = 0;
+            }
             req.session.username = username;
             req.session.role = response.role;
         }
@@ -19,7 +22,7 @@ router.route('/login').post((req, res, next) => {
 
 router.route('/logout').post((req, res, next) => {
     if (req.body.username && (req.body.username === req.session.username)) {
-        req.session= null;
+        req.session = null;
         res.send({message: 'Logged Out'});
     } else {
         const err = new Error('Can only logout if already logged in');

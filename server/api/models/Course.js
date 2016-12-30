@@ -34,6 +34,18 @@ const CourseSchema = new Schema({
     attachments: [AttachmentSchema]
 });
 
+CourseSchema.statics.addAttachments = (courseCode, attachments) => {
+    return Course.update({
+        code: courseCode
+    }, {
+        $push: {
+            attachments: {
+                $each: attachments
+            }
+        }
+    }).exec();
+};
+
 const Course = mongoose.model('Course', CourseSchema);
 
 module.exports = Course;

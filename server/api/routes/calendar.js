@@ -72,14 +72,16 @@ router.route('/').get((req, res, next) => {
     }
 }).post((req, res, next) => {
     if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
+        const err = new Error('Admin role required');
+        err.status = 401;
+        next(err);
         return;
     }
 
-    if (!(req.body.course && req.body.start && req.body.end)) {
-        res.status(400);
-        res.send('Invalid arguments');
+    if (!req.body.code) {
+        const err = new Error('Invalid arguments');
+        err.status = 400;
+        next(err);
         return;
     }
 

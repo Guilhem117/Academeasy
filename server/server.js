@@ -6,27 +6,28 @@
 // =============================================================================
 
 // call the packages we need
-var express = require('express'); // call express
-var cookieSession = require('cookie-session');
-var bodyParser = require('body-parser');
-var debug = require('debug')('server:server');
-var logger = require('morgan');
-var http = require('http');
+const express = require('express');
+const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser');
+const debug = require('debug')('server:server');
+const logger = require('morgan');
+const http = require('http');
 
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/academeasy', function(err) {
+mongoose.connect('mongodb://localhost:27017/academeasy', (err) => {
     if (err) {
         throw err;
     }
 });
 
-var app = express(); // define our app using express
+const port = process.env.PORT || 8081; // set our port
+const app = express(); // define our app using express
+app.set('port', port);
 app.set('trust proxy', 1);
 
 // configure app to use bodyParser()
-// this will let us get the data from a POST
-//app.use(bodyParser.urlencoded({extended: true}));
+// Only json parser is needed here
 app.use(bodyParser.json());
 app.use(logger('dev'));
 app.use(cookieSession({
@@ -37,6 +38,7 @@ app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: false
 }));
+
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -46,6 +48,7 @@ app.use(function(req, res, next) {
     next();
 });
 
+// API routes
 app.use('/api', require('./api/api'));
 
 // catch 404 and forward to error handler
@@ -61,15 +64,16 @@ app.use(function(err, req, res, next) {
         return next(err);
     }
 
-    console.log(err);
+    //log unknown errors and HTTP 500
+    if (!err.status || (err.status >= 500)) {
+        console.log(err);
+    }
     res.status(err.status || 500).send({'error': err.message});
 });
 
 // START THE SERVER
 // =============================================================================
-var port = process.env.PORT || 8081; // set our port
-app.set('port', port);
-var server = http.createServer(app);
+const server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

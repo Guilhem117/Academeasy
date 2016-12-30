@@ -10,10 +10,10 @@ class NavBar extends Component {
 
         this.state = {
             studentNavigation: [
-                'home', 'courses', 'profile','calendar'
+                'home', 'courses', 'profile', 'calendar'
             ],
             teacherNavigation: [
-                'home', 'courses', 'profile','calendar'
+                'home', 'courses', 'profile', 'calendar'
             ],
             adminNavigation: [
                 'home',
@@ -50,6 +50,9 @@ class NavBar extends Component {
         UsersStore.logoutUser(localStorage.username).then(_ => {
             localStorage.clear();
             location.reload();
+        }).catch(_ => {
+            localStorage.clear();
+            location.reload();
         });
     }
 
@@ -68,6 +71,9 @@ class NavBar extends Component {
             default:
                 navigation = <Nav/>
         }
+
+        const {username} = localStorage;
+
         return (
             <Navbar>
                 <Navbar.Header>
@@ -80,9 +86,12 @@ class NavBar extends Component {
                 </Navbar.Header>
                 <Navbar.Collapse>
                     {navigation}
-                    <Navbar.Text pullRight>
-                        {localStorage.role && <Button bsStyle="link" bsSize="xsmall" onClick={this.logout}>Logout</Button>}
-                    </Navbar.Text>
+                    {username && <Navbar.Text pullRight>
+                        <Button bsStyle="link" bsSize="xsmall" onClick={this.logout}>Logout</Button>
+                    </Navbar.Text>}
+                    {username && <Navbar.Text pullRight>
+                        {username}
+                    </Navbar.Text>}
                 </Navbar.Collapse>
             </Navbar>
 

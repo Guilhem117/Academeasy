@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-var Busboy = require('busboy');
+const Busboy = require('busboy');
 
 const Course = require('../models/Course');
 const Teacher = require('../models/Teacher');
@@ -14,8 +14,6 @@ const documentSelection = {
     'attachments.data': 0
 };
 
-// on routes that end in /course
-// ----------------------------------------------------
 router.route('/').get((req, res, next) => {
     const query = Course.find();
 
@@ -88,40 +86,57 @@ router.route('/:courseCode').get((req, res, next) => {
 });
 
 router.route('/:courseCode/attachment').post((req, res, next) => {
-    const busboy = new Busboy({headers: req.headers});
-    const attachments = [];
+    new Promise((resolve, reject) => {
+        const {role, username} = req.session;
+        const {courseCode} = req.params;
+        switch (role) {
+            case 'admin':
+                resolve();
+                break;
+            case 'teacher':
+                Teacher.findOne({username, courses: courseCode}).exec().then((teacher) => {
+                    if (teacher) {
+                        resolve();
+                    } else {
+                        reject('This is not you course');
+                    }
+                });
+                break;
+            default:
+                reject('Only admins and teachers can upload attachments');
+        }
+    }).then(_ => {
+        const busboy = new Busboy({headers: req.headers});
+        const attachments = [];
 
-    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
 
-        const receivedData = [];
-        let length = 0;
+            const receivedData = [];
+            let length = 0;
 
-        file.on('data', (data) => {
-            receivedData.push(data);
-            length += data.length;
+            file.on('data', (data) => {
+                receivedData.push(data);
+                length += data.length;
+            });
+
+            file.on('end', _ => {
+                attachments.push({name: filename, data: Buffer.concat(receivedData), length: length, mimetype: mimetype});
+            });
         });
 
-        file.on('end', _ => {
-            attachments.push({name: filename, data: Buffer.concat(receivedData), length: length, mimetype: mimetype});
+        busboy.on('finish', () => {
+            Course.addAttachments(req.params.courseCode, attachments).then((status) => {
+                res.send(status);
+            }).catch((err) => {
+                next(err);
+            });
         });
+        req.pipe(busboy);
+    }).catch((err) => {
+        const error = new Error(err);
+        error.status = 401;
+        next(error);
     });
-
-    busboy.on('finish', () => {
-        Course.update({
-            code: req.params.courseCode
-        }, {
-            $push: {
-                attachments: {
-                    $each: attachments
-                }
-            }
-        }, {new: true}).exec().then((course) => {
-            res.send(course);
-        }).catch((err) => {
-            next(err);
-        });
-    });
-    req.pipe(busboy);
 });
 
 router.route('/:courseCode/attachment/:attachmentName').get((req, res, next) => {

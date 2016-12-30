@@ -19,13 +19,15 @@ class LoginDialog extends Component {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            remember: false
         };
     }
 
     onLogin = (event) => {
         const username = this.state.username.toLowerCase();
-        UsersStore.loginUser(username, this.state.password).then((loginAction) => {
+        const {password, remember} = this.state;
+        UsersStore.loginUser(username, password, remember).then((loginAction) => {
             if (loginAction.success) {
                 localStorage.role = loginAction.role;
                 localStorage.username = username;
@@ -42,6 +44,13 @@ class LoginDialog extends Component {
         return (event) => {
             const {value} = event.target;
             this.setState({[valueName]: value});
+        }
+    }
+
+    onChangeCheckbox = (valueName) => {
+        return (event) => {
+            let {checked} = event.target;
+            this.setState({[valueName]: checked});
         }
     }
 
@@ -75,7 +84,7 @@ class LoginDialog extends Component {
                         </FormGroup>
                         <FormGroup>
                             <Col smOffset={2} sm={10}>
-                                <Checkbox>Remember me</Checkbox>
+                                <Checkbox checked={this.state.remember} onChange={this.onChangeCheckbox('remember')}>Remember me</Checkbox>
                             </Col>
                         </FormGroup>
                     </Form>

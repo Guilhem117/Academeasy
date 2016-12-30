@@ -14,33 +14,42 @@ import {
 } from 'react-bootstrap';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import StudentsStore from './Stores/Students';
+import TeachersStore from './Stores/Teachers';
 
 class ProfileDetails extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            student: {},
+            profile: {},
             displayPasswordDialog: false
         };
 
     }
 
     componentWillMount = () => {
-        const {username} = localStorage;
-        StudentsStore.getStudent(username).then((student) => {
-            this.setState({student});
-        });
-
+        const {role, username} = localStorage;
+        switch (role) {
+            case 'student':
+                StudentsStore.getStudent(username).then((student) => {
+                    this.setState({profile: student});
+                });
+                break;
+            case 'teacher':
+                TeachersStore.getTeacher(username).then((teacher) => {
+                    this.setState({profile: teacher});
+                });
+                break;
+        }
     }
 
     onChange = (valueName) => {
         return (event) => {
             const {value} = event.target;
             this.setState((prevState, props) => {
-                const student = prevState.student;
-                student[valueName] = value;
-                return {student};
+                const {profile} = prevState;
+                profile[valueName] = value;
+                return {profile};
             });
         }
     }
@@ -56,9 +65,9 @@ class ProfileDetails extends Component {
             reader.onload = (e) => {
                 const {result} = e.target;
                 this.setState((prevState, props) => {
-                    const {student} = prevState;
-                    student.avatar = result;
-                    return {student};
+                    const {profile} = prevState;
+                    profile.avatar = result;
+                    return {profile};
                 });
             };
             reader.readAsDataURL(file);
@@ -82,7 +91,15 @@ class ProfileDetails extends Component {
     }
 
     onUpdate = _ => {
-        StudentsStore.updateStudent(this.state.student).then(_ => {});
+        const {role} = localStorage;
+        switch (role) {
+            case 'student':
+                StudentsStore.updateStudent(this.state.profile).then(_ => {});
+                break;
+            case 'teacher':
+                TeachersStore.updateTeacher(this.state.profile).then(_ => {});
+                break;
+        }
     }
 
     render() {
@@ -96,25 +113,25 @@ class ProfileDetails extends Component {
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Username</Col>
                                     <Col sm={8}>
-                                        <FormControl type="text" onChange={this.onChange('username')} value={this.state.student.username || ''}/>
+                                        <FormControl type="text" onChange={this.onChange('username')} value={this.state.profile.username || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>First Name</Col>
                                     <Col sm={8}>
-                                        <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.student.firstName || ''}/>
+                                        <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.profile.firstName || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Last Name</Col>
                                     <Col sm={8}>
-                                        <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.student.lastName || ''}/>
+                                        <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.profile.lastName || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Email</Col>
                                     <Col sm={8}>
-                                        <FormControl type="email" onChange={this.onChange('email')} value={this.state.student.email || ''}/>
+                                        <FormControl type="email" onChange={this.onChange('email')} value={this.state.profile.email || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
@@ -128,7 +145,7 @@ class ProfileDetails extends Component {
                             </Form>
                         </Col>
                         <Col md={4}>
-                            <Thumbnail src={this.state.student.avatar || '/student.png'}>
+                            <Thumbnail src={this.state.profile.avatar || '/student.png'}>
                                 <p className="text-center">
                                     <FormControl type="file" onChange={this.onChangeAvatar}/>
                                 </p>

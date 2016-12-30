@@ -6,8 +6,6 @@ const generatePassword = require('password-generator');
 const Student = require('../models/Student');
 const User = require('../models/User');
 
-// on routes that end in /course
-// ----------------------------------------------------
 router.route('/').get((req, res, next) => {
     const query = Student.find();
 
@@ -60,22 +58,14 @@ router.route('/').get((req, res, next) => {
 });
 
 router.route('/:username').get((req, res, next) => {
-    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
-
-        Student.findOne({username: req.params.username}).select({'_id': 0, '__v': 0}).exec().then((student) => {
-            res.send(student);
-        }).catch((err) => {
-            next(err);
-        });
-    } else {
-        const err = new Error('Admin role required or yourself only');
-        err.status = 401;
+    Student.findOne({username: req.params.username}).select({'_id': 0, '__v': 0}).exec().then((student) => {
+        res.send(student);
+    }).catch((err) => {
         next(err);
-    }
+    });
 
 }).put((req, res, next) => {
-    if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
-
+    if ((req.session.role === 'student' && req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
         Student.findOneAndUpdate({
             username: req.params.username
         }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((student) => {

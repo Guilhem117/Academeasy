@@ -64,7 +64,7 @@ const UsersStore = {
         });
     },
 
-    loginUser: (username, password) => {
+    loginUser: (username, password, remember) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
@@ -73,7 +73,7 @@ const UsersStore = {
             credentials: 'include',
             method: 'POST',
             headers: headers,
-            body: JSON.stringify({username, password})
+            body: JSON.stringify({username, password, remember})
         });
 
         return fetch(request).then(resp => {

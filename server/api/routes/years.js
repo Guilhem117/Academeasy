@@ -4,8 +4,6 @@ const router = express.Router();
 
 const Year = require('../models/Year');
 
-// on routes that end in /course
-// ----------------------------------------------------
 router.route('/').get((req, res, next) => {
     const query = Year.find();
 

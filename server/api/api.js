@@ -2,35 +2,32 @@
 const express = require('express');
 const router = express.Router();
 
-const users = require('./routes/users');
-const courses = require('./routes/courses');
-const students = require('./routes/students');
-const teachers = require('./routes/teachers');
-const years = require('./routes/years');
-const calendar = require('./routes/calendar');
+// Check if user is connected => required for the API
+router.use((req, res, next) => {
+    const {path, method} = req;
+    const {role, username} = req.session;
+    if (method === 'OPTIONS' || path === '/users/login' || (role && username)) {
+        next();
+    } else {
+        const err = new Error('Must be connected');
+        err.status = 401;
+        next(err);
+    }
+});
 
-router.use('/users', users);
-router.use('/courses', courses);
-router.use('/students', students);
-router.use('/teachers', teachers);
-router.use('/years', years);
-router.use('/calendar', calendar);
+// All PI routes
+router.use('/users', require('./routes/users'));
+router.use('/courses', require('./routes/courses'));
+router.use('/students', require('./routes/students'));
+router.use('/teachers', require('./routes/teachers'));
+router.use('/years', require('./routes/years'));
+router.use('/calendar', require('./routes/calendar'));
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
     var err = new Error('Api Not Found');
     err.status = 404;
     next(err);
-});
-
-// error handler
-router.use(function(err, req, res, next) {
-    if (res.headersSent) {
-        return next(err);
-    }
-
-    console.log(err);
-    res.status(err.status || 500).send({'error': err.message});
 });
 
 module.exports = router;
