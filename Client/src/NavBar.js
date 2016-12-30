@@ -13,7 +13,7 @@ class NavBar extends Component {
                 'home', 'courses', 'profile', 'calendar'
             ],
             teacherNavigation: [
-                'home', 'courses', 'profile', 'calendar'
+                'home', 'courses', 'profile', 'calendar', 'scan'
             ],
             adminNavigation: [
                 'home',
@@ -33,6 +33,7 @@ class NavBar extends Component {
                 profile: 'Profile',
                 calendar: 'Calendar',
                 announcements: 'Announcement',
+                scan: 'Scan Students',
                 admin: 'Admin'
             }
         };

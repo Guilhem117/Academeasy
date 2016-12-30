@@ -94,7 +94,7 @@ router.route('/').get((req, res, next) => {
 
 });
 
-router.route('/entry/:entryId').get((req, res, next) => {
+router.route('/:entryId').get((req, res, next) => {
     Calendar.findOne({id: req.params.entryId}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
         res.send(entry);
     }).catch((err) => {

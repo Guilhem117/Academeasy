@@ -16,7 +16,7 @@ import AnnouncementsList from './AnnouncementsList';
 import AnnouncementDetails from './AnnouncementDetails';
 import Timetable from './Timetable';
 import AdminsList from './AdminsList';
-
+import StudentsScan from './StudentsScan';
 import App from './App';
 
 import UsersStore from './Stores/Users';
@@ -95,6 +95,14 @@ ReactDOM.render(
         <Route path="announcement/:announceId" components={{
             navBar: NavBar,
             content: AnnouncementDetails
+        }}/>
+        <Route path="scan" components={{
+            navBar: NavBar,
+            content: StudentsScan
+        }}/>
+        <Route path="scan/:eventId" components={{
+            navBar: NavBar,
+            content: StudentsScan
         }}/>
         <Route path="admin" components={{
             navBar: NavBar,

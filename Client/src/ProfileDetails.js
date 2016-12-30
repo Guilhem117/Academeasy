@@ -12,6 +12,7 @@ import {
     FormControl,
     Thumbnail
 } from 'react-bootstrap';
+import QRCode from 'qrcode.react';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import StudentsStore from './Stores/Students';
 import TeachersStore from './Stores/Teachers';
@@ -103,39 +104,41 @@ class ProfileDetails extends Component {
     }
 
     render() {
+        const {username} = sessionStorage;
+
         return (
             <Grid className="table-background">
                 {this.state.displayPasswordDialog && <ChangePasswordDialog confirm current onCancel={this.onChangePasswordCancel} onConfirm={this.onChangePasswordConfirm}/>}
                 <Panel header="My profile">
                     <Row>
-                        <Col md={8}>
+                        <Col md={6}>
                             <Form horizontal>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Username</Col>
-                                    <Col sm={8}>
+                                    <Col sm={9}>
                                         <FormControl type="text" onChange={this.onChange('username')} value={this.state.profile.username || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>First Name</Col>
-                                    <Col sm={8}>
+                                    <Col sm={9}>
                                         <FormControl type="text" onChange={this.onChange('firstName')} value={this.state.profile.firstName || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Last Name</Col>
-                                    <Col sm={8}>
+                                    <Col sm={9}>
                                         <FormControl type="text" onChange={this.onChange('lastName')} value={this.state.profile.lastName || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col componentClass={ControlLabel} sm={3}>Email</Col>
-                                    <Col sm={8}>
+                                    <Col sm={9}>
                                         <FormControl type="email" onChange={this.onChange('email')} value={this.state.profile.email || ''}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Col smOffset={3} sm={8}>
+                                    <Col smOffset={3} sm={9}>
                                         <ButtonToolbar>
                                             <Button onClick={this.onUpdate}>Update</Button>
                                             <Button onClick={this.onChangePassword}>Change password</Button>
@@ -144,12 +147,29 @@ class ProfileDetails extends Component {
                                 </FormGroup>
                             </Form>
                         </Col>
-                        <Col md={4}>
-                            <Thumbnail src={this.state.profile.avatar || '/student.png'}>
-                                <p className="text-center">
-                                    <FormControl type="file" onChange={this.onChangeAvatar}/>
-                                </p>
-                            </Thumbnail>
+                        <Col md={3}>
+                            <Row style={{
+                                textAlign: 'center'
+                            }}><h3>Avatar</h3></Row>
+                            <Row style={{
+                                textAlign: 'center'
+                            }}>
+                                <Thumbnail src={this.state.profile.avatar || '/student.png'}>
+                                    <p className="text-center">
+                                        <FormControl type="file" onChange={this.onChangeAvatar}/>
+                                    </p>
+                                </Thumbnail>
+                            </Row>
+                        </Col>
+                        <Col md={3}>
+                            <Row style={{
+                                textAlign: 'center'
+                            }}><h3>QR Code</h3></Row>
+                            <Row style={{
+                                textAlign: 'center'
+                            }}>
+                                <QRCode value={username} level='M' size={200}/>
+                            </Row>
                         </Col>
                     </Row>
                 </Panel>
