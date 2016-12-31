@@ -88,7 +88,7 @@ router.route('/').get((req, res, next) => {
     req.body.id = uuid.v4();
 
     Announcement.create(req.body).then(_ => {
-        res.send({message: 'Announcement created!'});
+        res.send({success: 'Announcement created'});
     }).catch((err) => {
         next(err);
     });
@@ -158,7 +158,13 @@ router.route('/:announceId').get((req, res, next) => {
     Announcement.findOneAndUpdate({
         id: req.params.announceId
     }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((announce) => {
-        res.send(announce);
+        if (announce && announce.id) {
+            res.send({success: `${announce.id} modified`});
+        } else {
+            const err = new Error(`${announce.id} not found`);
+            err.status = 400;
+            next(err);
+        }
     }).catch((err) => {
         next(err);
     });

@@ -10,8 +10,8 @@ class AnnouncementsListAdmin extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          announcements: [],
-          selected: []
+            announcements: [],
+            selected: []
         };
 
         this.selectRowProp = {
@@ -23,16 +23,20 @@ class AnnouncementsListAdmin extends Component {
 
     }
 
-    componentWillMount() {
-      AnnouncementsStore.getAnnouncements().then((announcements) => {
-        this.setState({announcements});
-      });
+    componentDidMount() {
+        AnnouncementsStore.getAnnouncements().then((announcements) => {
+            this.setState({
+                announcements: announcements || []
+            });
+        });
     }
 
     componentWillReceiveProps() {
-      AnnouncementsStore.getAnnouncements().then((announcements) => {
-        this.setState({announcements});
-      });
+        AnnouncementsStore.getAnnouncements().then((announcements) => {
+            this.setState({
+                announcements: announcements || []
+            });
+        });
     }
 
     onRowSelect = (row, isSelected, e) => {
@@ -54,13 +58,11 @@ class AnnouncementsListAdmin extends Component {
         this.props.router.push(`/announcement/${row.id}`);
     }
 
-    onDelete = () => {
-    }
+    onDelete = () => {}
 
     onAdd = () => {
         this.props.router.push('/announcement/new');
     }
-
 
     onSelectAll = (isSelected, rows) => {
         if (isSelected) {
@@ -72,30 +74,29 @@ class AnnouncementsListAdmin extends Component {
         }
     }
 
-
     render() {
         return (
-          <Grid className="table-background">
-              <Panel header="Announcements list">
-                  <Row>
-                      <BootstrapTable data={this.state.announcements} options={{
-                          onRowClick: this.onRowClick,
-                          onSearchChange: this.onSearchChange
-                      }} remote selectRow={this.selectRowProp} search striped hover>
-                          <TableHeaderColumn isKey dataField='id' hidden>#</TableHeaderColumn>
-                          <TableHeaderColumn dataField='start' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>Start</TableHeaderColumn>
-                          <TableHeaderColumn dataField='end' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>End</TableHeaderColumn>
-                          <TableHeaderColumn dataField='text'>Text</TableHeaderColumn>
-                          <TableHeaderColumn dataField='courses' width='100'>Courses</TableHeaderColumn>
-                          <TableHeaderColumn dataField='teachers' width='100'>Teachers</TableHeaderColumn>
-                      </BootstrapTable>
-                  </Row>
-                  <Row>
-                      <Button onClick={this.onAdd}>Add</Button>
-                      <Button onClick={this.onDelete}>Delete</Button>
-                  </Row>
-              </Panel>
-          </Grid>
+            <Grid className="table-background">
+                <Panel header="Announcements list">
+                    <Row>
+                        <BootstrapTable data={this.state.announcements} options={{
+                            onRowClick: this.onRowClick,
+                            onSearchChange: this.onSearchChange
+                        }} remote selectRow={this.selectRowProp} search striped hover>
+                            <TableHeaderColumn isKey dataField='id' hidden>#</TableHeaderColumn>
+                            <TableHeaderColumn dataField='start' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>Start</TableHeaderColumn>
+                            <TableHeaderColumn dataField='end' width='150' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>End</TableHeaderColumn>
+                            <TableHeaderColumn dataField='text'>Text</TableHeaderColumn>
+                            <TableHeaderColumn dataField='courses' width='100'>Courses</TableHeaderColumn>
+                            <TableHeaderColumn dataField='teachers' width='100'>Teachers</TableHeaderColumn>
+                        </BootstrapTable>
+                    </Row>
+                    <Row>
+                        <Button onClick={this.onAdd}>Add</Button>
+                        <Button onClick={this.onDelete}>Delete</Button>
+                    </Row>
+                </Panel>
+            </Grid>
 
         );
     }

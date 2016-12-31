@@ -77,7 +77,7 @@ router.route('/').get((req, res, next) => {
         return;
     }
 
-    if (!req.body.code) {
+    if (!req.body.course) {
         const err = new Error('Invalid arguments');
         err.status = 400;
         next(err);
@@ -87,7 +87,7 @@ router.route('/').get((req, res, next) => {
     req.body.id = uuid.v4();
 
     Calendar.create(req.body).then(_ => {
-        res.send({message: 'Calendar entry created!'});
+        res.send({success: 'Calendar entry created'});
     }).catch((err) => {
         next(err);
     });
@@ -117,7 +117,13 @@ router.route('/:entryId').get((req, res, next) => {
     Calendar.findOneAndUpdate({
         id: req.params.entryId
     }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
-        res.send(entry);
+        if (entry && entry.id) {
+            res.send({success: `${entry.id} modified`});
+        } else {
+            const err = new Error(`${entry.id} not found`);
+            err.status = 400;
+            next(err);
+        }
     }).catch((err) => {
         next(err);
     });

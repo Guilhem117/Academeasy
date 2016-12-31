@@ -96,7 +96,14 @@ class TimetableEdit extends Component {
         return (newDate) => {
             this.setState((prevState, props) => {
                 const {entry} = prevState;
-                entry[which] = newDate.toDate();
+                if (typeof(newDate) === 'string') {
+                    entry[which] = newDate;
+                } else {
+                    entry[which] = newDate.toDate();
+                    if (!(entry.end && entry.end.getTime) || (entry.start && entry.start.getTime && entry.start.getTime() > entry.end.getTime())) {
+                        entry.end = entry.start;
+                    }
+                }
                 return {entry};
             });
         }

@@ -48,7 +48,7 @@ router.route('/').get((req, res, next) => {
     }
 
     Course.create(req.body).then(_ => {
-        res.send({message: 'Course created!'});
+        res.send({success: 'Course created'});
     }).catch((err) => {
         if (err.code === 11000) {
             const err2 = new Error('A course with same code exists');
@@ -78,7 +78,13 @@ router.route('/:courseCode').get((req, res, next) => {
     Course.findOneAndUpdate({
         code: req.params.courseCode
     }, req.body, {new: true}).select(documentSelection).exec().then((course) => {
-        res.send(course);
+        if (course && course.code) {
+            res.send({success: `${course.code} modified`});
+        } else {
+            const err = new Error(`${course.code} not found`);
+            err.status = 400;
+            next(err);
+        }
     }).catch((err) => {
         next(err);
     });

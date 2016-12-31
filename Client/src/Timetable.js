@@ -39,6 +39,25 @@ class Timetable extends Component {
         });
     }
 
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.params !== this.props.params) {
+            Promise.all([CoursesStore.getCourses(), CalendarStore.getCalendar()]).then((values) => {
+                const [courses,
+                    events] = values;
+                events.forEach((event) => {
+                    event.start = event.start
+                        ? new Date(event.start)
+                        : '';
+                    event.end = event.end
+                        ? new Date(event.end)
+                        : '';
+                    return event;
+                });
+                this.setState({events, courses});
+            });
+        }
+    }
+
     onCalendarView = (view) => {
         sessionStorage.calendarView = view;
         this.setState({calendarView: view});

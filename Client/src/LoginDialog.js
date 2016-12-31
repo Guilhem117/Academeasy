@@ -28,7 +28,7 @@ class LoginDialog extends Component {
         const username = this.state.username.toLowerCase();
         const {password, remember} = this.state;
         UsersStore.loginUser(username, password, remember).then((loginAction) => {
-            if (loginAction.success) {
+            if (loginAction && loginAction.success) {
                 sessionStorage.role = loginAction.role;
                 sessionStorage.username = username;
                 if (location.state && location.state.nextPathname) {

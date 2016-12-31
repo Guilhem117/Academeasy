@@ -44,7 +44,7 @@ router.route('/').get((req, res, next) => {
     Teacher.create(req.body).then(_ => {
         return User.create({username: req.body.username, role: 'teacher'})
     }).then(_ => {
-        res.send({message: 'Teacher created!'});
+        res.send({success: 'Teacher created'});
     }).catch((err) => {
         if (err.code === 11000) {
             const err2 = new Error('A user with same login exists');
@@ -68,7 +68,13 @@ router.route('/:username').get((req, res, next) => {
         Teacher.findOneAndUpdate({
             username: req.params.username
         }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((teacher) => {
-            res.send(teacher);
+          if (teacher && teacher.username) {
+              res.send({success: `${teacher.username} modified`});
+          } else {
+              const err = new Error(`${teacher.username} not found`);
+              err.status = 400;
+              next(err);
+          }
         }).catch((err) => {
             next(err);
         });

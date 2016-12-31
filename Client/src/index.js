@@ -21,6 +21,8 @@ import App from './App';
 
 import UsersStore from './Stores/Users';
 
+import {ReactAlert} from './Alerts';
+
 import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import 'react-select/dist/react-select.css';
 
@@ -111,3 +113,6 @@ ReactDOM.render(
     </Route>
     <Route path="/login" component={LoginDialog}/>
 </Router>, document.getElementById('root'));
+
+ReactDOM.render(
+    <ReactAlert className="toast-top-right"/>, document.getElementById('toastr'));

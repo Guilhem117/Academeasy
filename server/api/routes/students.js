@@ -44,7 +44,7 @@ router.route('/').get((req, res, next) => {
     Student.create(req.body).then(_ => {
         return User.create({username: req.body.username, role: 'student'});
     }).then(_ => {
-        res.send({message: 'Student created!'});
+        res.send({success: 'Student created!'});
     }).catch((err) => {
         if (err.code === 11000) {
             const err2 = new Error('A user with same login exists');
@@ -69,7 +69,13 @@ router.route('/:username').get((req, res, next) => {
         Student.findOneAndUpdate({
             username: req.params.username
         }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((student) => {
-            res.send(student);
+            if (student && student.username) {
+                res.send({success: `${student.username} modified`});
+            } else {
+                const err = new Error(`${student.username} not found`);
+                err.status = 400;
+                next(err);
+            }
         }).catch((err) => {
             next(err);
         });
@@ -119,7 +125,7 @@ router.route('/:username/newpassword').get((req, res, next) => {
                 password
             }}).exec().then((result) => {
             if (result) {
-                res.send({message: 'Password changed'});
+                res.send({success: 'Password changed'});
             } else {
                 const err = new Error('Current password invalid');
                 err.status = 401;

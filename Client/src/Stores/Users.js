@@ -1,3 +1,33 @@
+import Alerts from '../Alerts';
+
+const responseHandler = (resp) => {
+    return resp.json().then((decoded) => {
+        const {success, error, warning, info} = decoded;
+        if (typeof(success) === 'string') {
+            Alerts.showSuccess(success);
+        }
+        if (typeof(error) === 'string') {
+            Alerts.showError(error);
+        }
+        if (typeof(warning) === 'string') {
+            Alerts.showWarning(warning);
+        }
+        if (typeof(info) === 'string') {
+            Alerts.showInfo(info);
+        }
+
+        if (resp.ok) {
+            return decoded;
+        } else {
+            if (!error) {
+                Alerts.showError('Unknown error');
+            }
+        }
+    }, (err) => {
+        Alerts.showError(`System error : ${err}`);
+    });
+}
+
 const UsersStore = {
     getAdmins: _ => {
         const headers = new Headers();
@@ -10,15 +40,7 @@ const UsersStore = {
             headers: headers
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-
-        });
-
+        return fetch(request).then(responseHandler);
     },
 
     getSession: _ => {
@@ -32,15 +54,7 @@ const UsersStore = {
             headers: headers
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-
-        });
-
+        return fetch(request).then(responseHandler);
     },
 
     updateAdmin: (admin) => {
@@ -55,14 +69,7 @@ const UsersStore = {
             body: JSON.stringify(admin)
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-
-        });
+        return fetch(request).then(responseHandler);
     },
 
     addAdmin: (admin) => {
@@ -77,13 +84,7 @@ const UsersStore = {
             body: JSON.stringify(admin)
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-        });
+        return fetch(request).then(responseHandler);
     },
 
     loginUser: (username, password, remember) => {
@@ -98,14 +99,7 @@ const UsersStore = {
             body: JSON.stringify({username, password, remember})
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-
-        });
+        return fetch(request).then(responseHandler);
     },
 
     logoutUser: (username) => {
@@ -120,14 +114,7 @@ const UsersStore = {
             body: JSON.stringify({username})
         });
 
-        return fetch(request).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            } else {
-                return Promise.reject();
-            }
-
-        });
+        return fetch(request).then(responseHandler);
     }
 };
 
