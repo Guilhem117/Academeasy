@@ -28,21 +28,27 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const CalendarStore = {
     getCalendar: (maxEntries) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const query = maxEntries ? `?count=${maxEntries}` : '';
+        const query = maxEntries
+            ? `?count=${maxEntries}`
+            : '';
 
-        const request = new Request(`/api/calendar${query}`, {
+        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getCalendarForCourse: (courseCode, maxEntries) => {
@@ -51,15 +57,17 @@ const CalendarStore = {
         headers.append('Accept', 'application/json');
 
         const courseQuery = `?course=${courseCode}`
-        const query = maxEntries ? `${courseQuery}&count=${maxEntries}` : courseQuery;
+        const query = maxEntries
+            ? `${courseQuery}&count=${maxEntries}`
+            : courseQuery;
 
-        const request = new Request(`/api/calendar${query}`, {
+        const request = new Request(`http://localhost:8081/api/calendar${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getEntry: (entryId) => {
@@ -67,13 +75,13 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/calendar/${entryId}`, {
+        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateEntry: (entry) => {
@@ -81,14 +89,14 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/calendar/${entry.id}`, {
+        const request = new Request(`http://localhost:8081/api/calendar/${entry.id}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(entry)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     removeEntry: (entryId) => {
@@ -96,13 +104,13 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/calendar/${entryId}`, {
+        const request = new Request(`http://localhost:8081/api/calendar/${entryId}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addEntry: (entry) => {
@@ -110,14 +118,14 @@ const CalendarStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/calendar`, {
+        const request = new Request(`http://localhost:8081/api/calendar`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify(entry)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     }
 }
 

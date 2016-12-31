@@ -28,6 +28,10 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const CoursesStore = {
     getCourses: (search) => {
         const headers = new Headers();
@@ -35,8 +39,8 @@ const CoursesStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `/api/courses?search=${search}`
-            : '/api/courses';
+            ? `http://localhost:8081/api/courses?search=${search}`
+            : 'http://localhost:8081/api/courses';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -44,7 +48,7 @@ const CoursesStore = {
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getCourse: (courseCode) => {
@@ -52,13 +56,13 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/courses/${courseCode}`, {
+        const request = new Request(`http://localhost:8081/api/courses/${courseCode}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateCourse: (course) => {
@@ -66,14 +70,14 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/courses/${course.code}`, {
+        const request = new Request(`http://localhost:8081/api/courses/${course.code}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(course)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     removeCourse: (courseCode) => {
@@ -81,13 +85,13 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/courses/${courseCode}`, {
+        const request = new Request(`http://localhost:8081/api/courses/${courseCode}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addCourse: (course) => {
@@ -95,14 +99,14 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/courses`, {
+        const request = new Request(`http://localhost:8081/api/courses`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify(course)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     setTeachers: (course, usernames) => {
@@ -114,14 +118,14 @@ const CoursesStore = {
             teachers: Array.prototype.join.call(usernames, ',')
         };
 
-        const request = new Request(`/api/courses/${course}/teachers`, {
+        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(teachersList)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getTeachers: (course) => {
@@ -129,13 +133,13 @@ const CoursesStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/courses/${course}/teachers`, {
+        const request = new Request(`http://localhost:8081/api/courses/${course}/teachers`, {
             credentials: 'include',
             method: 'GET',
-            headers: headers,
+            headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addAttachments: (courseCode, files) => {
@@ -146,17 +150,17 @@ const CoursesStore = {
             i++;
         });
 
-        const request = new Request(`/api/courses/${courseCode}/attachment`, {
+        const request = new Request(`http://localhost:8081/api/courses/${courseCode}/attachment`, {
             credentials: 'include',
             method: 'POST',
             body: data
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getAttachmentURL: (courseCode, fileName) => {
-      return `/api/courses/${courseCode}/attachment/${fileName}`;
+        return `http://localhost:8081/api/courses/${courseCode}/attachment/${fileName}`;
     }
 }
 

@@ -28,19 +28,23 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const UsersStore = {
     getAdmins: _ => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/admins', {
+        const request = new Request('http://localhost:8081/api/users/admins', {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getSession: _ => {
@@ -48,13 +52,13 @@ const UsersStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/session', {
+        const request = new Request('http://localhost:8081/api/users/session', {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateAdmin: (admin) => {
@@ -62,14 +66,14 @@ const UsersStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/users/admins/${admin.username}`, {
+        const request = new Request(`http://localhost:8081/api/users/admins/${admin.username}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(admin)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addAdmin: (admin) => {
@@ -77,14 +81,14 @@ const UsersStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/users/admins`, {
+        const request = new Request(`http://localhost:8081/api/users/admins`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify(admin)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     loginUser: (username, password, remember) => {
@@ -92,14 +96,14 @@ const UsersStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/login', {
+        const request = new Request('http://localhost:8081/api/users/login', {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify({username, password, remember})
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     logoutUser: (username) => {
@@ -107,14 +111,14 @@ const UsersStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request('/api/users/logout', {
+        const request = new Request('http://localhost:8081/api/users/logout', {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify({username})
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     }
 };
 

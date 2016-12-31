@@ -28,6 +28,10 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const TeachersStore = {
     getTeachers: (search) => {
         const headers = new Headers();
@@ -35,8 +39,8 @@ const TeachersStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `/api/teachers?search=${search}`
-            : '/api/teachers';
+            ? `http://localhost:8081/api/teachers?search=${search}`
+            : 'http://localhost:8081/api/teachers';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -44,68 +48,66 @@ const TeachersStore = {
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
-
     getTeacher: (username) => {
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-      const request = new Request(`/api/teachers/${username}`, {
-          credentials: 'include',
-          method: 'GET',
-          headers: headers
-      });
+        const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
 
-      return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateTeacher: (teacher) => {
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-      const request = new Request(`/api/teachers/${teacher.username}`, {
-          credentials: 'include',
-          method: 'PUT',
-          headers: headers,
-          body: JSON.stringify(teacher),
-      });
+        const request = new Request(`http://localhost:8081/api/teachers/${teacher.username}`, {
+            credentials: 'include',
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(teacher)
+        });
 
-      return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     removeTeacher: (username) => {
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-      const request = new Request(`/api/teachers/${username}`, {
-          credentials: 'include',
-          method: 'DELETE',
-          headers: headers,
-      });
+        const request = new Request(`http://localhost:8081/api/teachers/${username}`, {
+            credentials: 'include',
+            method: 'DELETE',
+            headers: headers
+        });
 
-      return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addTeacher: (teacher) => {
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-      const request = new Request(`/api/teachers`, {
-          credentials: 'include',
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(teacher),
-      });
+        const request = new Request(`http://localhost:8081/api/teachers`, {
+            credentials: 'include',
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(teacher)
+        });
 
-      return fetch(request).then(responseHandler);
-    },
-
+        return fetch(request).then(responseHandler, errorHandler);
+    }
 };
 
 export default TeachersStore;

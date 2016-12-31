@@ -28,21 +28,27 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const AnnouncementsStore = {
     getAnnouncements: (maxEntries) => {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const query = maxEntries ? `?count=${maxEntries}` : '';
+        const query = maxEntries
+            ? `?count=${maxEntries}`
+            : '';
 
-        const request = new Request(`/api/announcements${query}`, {
+        const request = new Request(`http://localhost:8081/api/announcements${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getAnnouncementsForCourse: (courseCode, maxEntries) => {
@@ -51,15 +57,17 @@ const AnnouncementsStore = {
         headers.append('Accept', 'application/json');
 
         const courseQuery = `?course=${courseCode}`
-        const query = maxEntries ? `${courseQuery}&count=${maxEntries}` : courseQuery;
+        const query = maxEntries
+            ? `${courseQuery}&count=${maxEntries}`
+            : courseQuery;
 
-        const request = new Request(`/api/announcements${query}`, {
+        const request = new Request(`http://localhost:8081/api/announcements${query}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getAnnounce: (announceId) => {
@@ -67,13 +75,13 @@ const AnnouncementsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/announcements/${announceId}`, {
+        const request = new Request(`http://localhost:8081/api/announcements/${announceId}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateAnnounce: (announce) => {
@@ -81,14 +89,14 @@ const AnnouncementsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/announcements/${announce.id}`, {
+        const request = new Request(`http://localhost:8081/api/announcements/${announce.id}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(announce)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     removeAnnounce: (announceId) => {
@@ -96,13 +104,13 @@ const AnnouncementsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/announcements/${announceId}`, {
+        const request = new Request(`http://localhost:8081/api/announcements/${announceId}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addAnnounce: (announce) => {
@@ -110,14 +118,14 @@ const AnnouncementsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/announcements`, {
+        const request = new Request(`http://localhost:8081/api/announcements`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
             body: JSON.stringify(announce)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     }
 }
 

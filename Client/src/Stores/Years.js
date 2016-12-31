@@ -28,24 +28,28 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const YearsStore = {
-  getYears:(search) => {
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Accept', 'application/json');
+    getYears: (search) => {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-      const url = search
-          ? `/api/years?search=${search}`
-          : '/api/years';
+        const url = search
+            ? `http://localhost:8081/api/years?search=${search}`
+            : 'http://localhost:8081/api/years';
 
-      const request = new Request(url, {
-          credentials: 'include',
-          method: 'GET',
-          headers: headers
-      });
+        const request = new Request(url, {
+            credentials: 'include',
+            method: 'GET',
+            headers: headers
+        });
 
-      return fetch(request).then(responseHandler);
-  },
+        return fetch(request).then(responseHandler, errorHandler);
+    }
 };
 
 export default YearsStore;

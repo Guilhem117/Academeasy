@@ -28,6 +28,10 @@ const responseHandler = (resp) => {
     });
 }
 
+const errorHandler = (err) => {
+    Alerts.showError(`System error : ${err}`);
+}
+
 const StudentsStore = {
     getStudents: (search) => {
         const headers = new Headers();
@@ -35,8 +39,8 @@ const StudentsStore = {
         headers.append('Accept', 'application/json');
 
         const url = search
-            ? `/api/students?search=${search}`
-            : '/api/students';
+            ? `http://localhost:8081/api/students?search=${search}`
+            : 'http://localhost:8081/api/students';
 
         const request = new Request(url, {
             credentials: 'include',
@@ -44,7 +48,7 @@ const StudentsStore = {
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     getStudent: (username) => {
@@ -52,13 +56,13 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students/${username}`, {
+        const request = new Request(`http://localhost:8081/api/students/${username}`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     updateStudent: (student) => {
@@ -66,14 +70,14 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students/${student.username}`, {
+        const request = new Request(`http://localhost:8081/api/students/${student.username}`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(student)
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     removeStudent: (username) => {
@@ -81,13 +85,13 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students/${username}`, {
+        const request = new Request(`http://localhost:8081/api/students/${username}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     addStudent: (student) => {
@@ -95,7 +99,7 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students`, {
+        const request = new Request(`http://localhost:8081/api/students`, {
             credentials: 'include',
             method: 'POST',
             headers: headers,
@@ -110,13 +114,13 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students/${username}/newpassword`, {
+        const request = new Request(`http://localhost:8081/api/students/${username}/newpassword`, {
             credentials: 'include',
             method: 'GET',
             headers: headers
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     },
 
     changePassword: (username, password, currentpassword) => {
@@ -124,14 +128,14 @@ const StudentsStore = {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const request = new Request(`/api/students/${username}/newpassword`, {
+        const request = new Request(`http://localhost:8081/api/students/${username}/newpassword`, {
             credentials: 'include',
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify({password,currentpassword})
+            body: JSON.stringify({password, currentpassword})
         });
 
-        return fetch(request).then(responseHandler);
+        return fetch(request).then(responseHandler, errorHandler);
     }
 
 };
