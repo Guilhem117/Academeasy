@@ -27,6 +27,10 @@ class CoursesListNonAdmin extends Component {
     });
   }
 
+  teacherLink = (teacher) => {
+    return <Link key={teacher.username} to={`/teacher/${teacher.username}`}>{`${teacher.lastName} ${teacher.firstName}`}</Link>;
+  }
+
   render() {
     return (
       <Grid className="table-background">
@@ -36,7 +40,7 @@ class CoursesListNonAdmin extends Component {
               <Media key={course.code}>
                 <Media.Body>
                   <Media.Heading><Link to={`/course/${course.code}`}>{course.year} - {course.code}</Link> / {course.label}</Media.Heading>
-                  <p>{this.state.teachers[course.code] && this.state.teachers[course.code].map((teacher) => `${teacher.lastName} ${teacher.firstName}`).join(' - ')}</p>
+                  <p>{this.state.teachers[course.code] && this.state.teachers[course.code].map(this.teacherLink)}</p>
                 </Media.Body>
               </Media>
             ))

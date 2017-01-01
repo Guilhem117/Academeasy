@@ -97,13 +97,15 @@ class NavBar extends Component {
           </Navbar.Text>}
           {username && <Navbar.Text style={(role !== 'admin' && this.avatarNavStyle) || {}} pullRight>
             {role !== 'admin' && <Image src={avatarURL || '/student.png'} style={{
-              width: 'auto',
+              width: '50px',
               height: '50px'
             }} circle/>}
+          </Navbar.Text>}
+          <Navbar.Text pullRight>
             {role === 'admin'
               ? username
               : <Link to='/profile'>{username}</Link>}
-          </Navbar.Text>}
+          </Navbar.Text>
         </Navbar.Collapse>
       </Navbar>
     );

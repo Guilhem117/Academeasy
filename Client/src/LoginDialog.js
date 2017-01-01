@@ -7,7 +7,8 @@ import {
     Checkbox,
     Button,
     ControlLabel,
-    Modal
+    Modal,
+    Carousel
 } from 'react-bootstrap';
 import './LoginDialog.css';
 
@@ -56,6 +57,21 @@ class LoginDialog extends Component {
 
     render() {
         return (
+          <div>
+            <Carousel controls={false} indicators={false}>
+              <Carousel.Item>
+                <img width='100%' height='auto' alt="900x500" src="/img/carousel1.jpg"/>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img width='100%' height='auto' alt="900x500" src="/img/carousel2.jpg"/>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img width='100%' height='auto' alt="900x500" src="/img/carousel3.jpg"/>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img width='100%' height='auto' alt="900x500" src="/img/carousel4.jpg"/>
+              </Carousel.Item>
+            </Carousel>
             <Modal.Dialog>
                 <Modal.Header>
                     <Modal.Title style={{
@@ -94,7 +110,7 @@ class LoginDialog extends Component {
                 </Modal.Footer>
 
             </Modal.Dialog>
-
+</div>
         );
 
     }

@@ -18,23 +18,48 @@ const documentSelection = {
 };
 
 router.route('/').get((req, res, next) => {
-  const query = Course.find();
+  const {role, username} = req.session;
 
-  if (req.query.search && req.query.search !== '') {
-    query.or([
-      {
-        code: new RegExp(req.query.search, 'i')
-      }, {
-        label: new RegExp(req.query.search, 'i')
-      }
-    ]);
+  if (role !== 'admin') {
+    let model = null;
+    switch (role) {
+      case 'teacher':
+        model = Teacher;
+        break;
+      case 'student':
+        model = Student;
+        break;
+    }
+
+    model.findOne({username}).exec().then((user) => {
+      return Course.find({
+        code: {
+          $in: user.courses
+        }
+      }).select(documentSelection).exec();
+    }).then((courses) => {
+      res.send(courses);
+    }).catch((err) => {
+      next(err);
+    });
+  } else {
+    const query = Course.find();
+    if (req.query.search) {
+      query.or([
+        {
+          code: new RegExp(req.query.search, 'i')
+        }, {
+          label: new RegExp(req.query.search, 'i')
+        }
+      ]);
+    }
+
+    query.select(documentSelection).exec().then((courses) => {
+      res.send(courses);
+    }).catch((err) => {
+      next(err);
+    });
   }
-
-  query.select(documentSelection).exec().then((courses) => {
-    res.send(courses);
-  }).catch((err) => {
-    next(err);
-  });
 }).post((req, res, next) => {
   if (req.session.role !== 'admin') {
     const err = new Error('Admin role required');
@@ -168,10 +193,9 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
 
     busboy.on('finish', () => {
       Course.addAttachments(req.params.courseCode, attachments).then((status) => {
-        if(status && status.ok === 1) {
+        if (status && status.ok === 1) {
           res.send({success: `Attachments added`});
-        }
-        else {
+        } else {
           next(status);
         }
       }).catch((err) => {

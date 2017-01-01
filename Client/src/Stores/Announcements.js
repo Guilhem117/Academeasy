@@ -36,14 +36,20 @@ const errorHandler = (err) => {
 }
 
 const AnnouncementsStore = {
-  getAnnouncements: (maxEntries) => {
+  getAnnouncements: (myCourses, maxEntries) => {
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
 
-    const query = maxEntries
+    let query = maxEntries
       ? `?count=${maxEntries}`
       : '';
+
+    if (myCourses) {
+      query += query
+        ? '&mycourses=true'
+        : '?mycourses=true';
+    }
 
     const request = new Request(`http://localhost:8081/api/announcements${query}`, {
       credentials: 'include',

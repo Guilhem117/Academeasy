@@ -8,11 +8,28 @@ const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 
 router.route('/').get((req, res, next) => {
-  const {course, count} = req.query;
+  const {course, count, mycourses} = req.query;
   const {role, username} = req.session;
   const limit = parseInt(count, 10);
 
-  if (role !== 'admin') {
+  if (role === 'admin' || typeof mycourses === 'undefined') {
+    const query = Announcement.find();
+    if (course) {
+      query.where({courses: course});
+    }
+    if (limit) {
+      query.where({
+        end: {
+          $gte: new Date()
+        }
+      }).limit(limit);
+    }
+    query.select({'_id': 0, '__v': 0}).sort({start: -1}).exec().then((announcements) => {
+      res.send(announcements);
+    }).catch((err) => {
+      next(err);
+    });
+  } else {
     let model = null;
     switch (role) {
       case 'teacher':
@@ -48,23 +65,6 @@ router.route('/').get((req, res, next) => {
         return [];
       }
     }).then((announcements) => {
-      res.send(announcements);
-    }).catch((err) => {
-      next(err);
-    });
-  } else {
-    const query = Announcement.find();
-    if (course) {
-      query.where({courses: course});
-    }
-    if (limit) {
-      query.where({
-        end: {
-          $gte: new Date()
-        }
-      }).limit(limit);
-    }
-    query.select({'_id': 0, '__v': 0}).sort({start: -1}).exec().then((announcements) => {
       res.send(announcements);
     }).catch((err) => {
       next(err);
