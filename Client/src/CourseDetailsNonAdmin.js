@@ -125,8 +125,8 @@ class CourseDetailsNonAdmin extends Component {
                                 </Well>
                             : null}
                         {this.state.course.attachments
-                            ? <ul>{this.state.course.attachments.map((file) => (
-                                        <li key={file.name}>
+                            ? <ul>{this.state.course.attachments.map((file, idx) => (
+                                        <li key={idx}>
                                             <a href={this.getAttachmentURL(file.name)}>{file.name}</a>
                                         </li>
                                     ))}
@@ -148,7 +148,7 @@ class CourseDetailsNonAdmin extends Component {
                             {canUploadFiles && <Button onClick={this.onSave}>Save</Button>}
                             <Button onClick={this.onCancel}>{canUploadFiles
                                     ? 'Cancel'
-                                    : 'Close'}</Button>
+                                    : 'Back'}</Button>
                         </ButtonToolbar>
                     </Col>
                 </Row>

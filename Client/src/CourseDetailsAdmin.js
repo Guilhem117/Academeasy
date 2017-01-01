@@ -19,6 +19,7 @@ import 'rc-color-picker/assets/index.css';
 
 import CoursesStore from './Stores/Courses'
 import TeachersStore from './Stores/Teachers'
+import YearsStore from './Stores/Years';
 
 class CourseDetailsAdmin extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class CourseDetailsAdmin extends Component {
       course: {},
       selectedTeachers: [],
       teachers: [],
+      years: [],
       files: undefined
     };
   }
@@ -38,14 +40,23 @@ class CourseDetailsAdmin extends Component {
       courseCode === 'new'
         ? {}
         : CoursesStore.getCourse(courseCode),
-      TeachersStore.getTeachers()
+      TeachersStore.getTeachers(),
+      YearsStore.getYears()
     ]).then((values) => {
       const [course,
-        teachers] = values;
+        teachers,
+        years] = values;
       const selectedTeachers = teachers.filter((teacher) => {
         return teacher.courses.includes(course.code);
       }).map((teacher) => teacher.username);
-      this.setState({course, teachers, selectedTeachers});
+      this.setState({
+        course,
+        teachers,
+        selectedTeachers,
+        years: years.map((year) => {
+          return {label: year.label, value: year.code};
+        })
+      });
     });
   }
 
@@ -57,14 +68,23 @@ class CourseDetailsAdmin extends Component {
         courseCode === 'new'
           ? {}
           : CoursesStore.getCourse(courseCode),
-        TeachersStore.getTeachers()
+        TeachersStore.getTeachers(),
+        YearsStore.getYears()
       ]).then((values) => {
         const [course,
-          teachers] = values;
+          teachers,
+          years] = values;
         const selectedTeachers = teachers.filter((teacher) => {
           return teacher.courses.includes(course.code);
         }).map((teacher) => teacher.username);
-        this.setState({course, teachers, selectedTeachers});
+        this.setState({
+          course,
+          teachers,
+          selectedTeachers,
+          years: years.map((year) => {
+            return {label: year.label, value: year.code};
+          })
+        });
       });
     }
   }
@@ -95,6 +115,17 @@ class CourseDetailsAdmin extends Component {
   onChangeTeachers = (teachers) => {
     this.setState({
       selectedTeachers: teachers.map((teacher) => teacher.value)
+    });
+  }
+
+  onChangeYear = (year) => {
+    const yearValue = year
+      ? year.value
+      : '';
+    this.setState((prevState, props) => {
+      const course = prevState.course;
+      course.year = yearValue;
+      return {course};
     });
   }
 
@@ -166,8 +197,8 @@ class CourseDetailsAdmin extends Component {
                   </Well>
                 : null}
               {this.state.course.attachments
-                ? <ul>{this.state.course.attachments.map((file) => (
-                      <li key={file.name}>
+                ? <ul>{this.state.course.attachments.map((file, idx) => (
+                      <li key={idx}>
                         <a href={this.getAttachmentURL(file.name)}>{file.name}</a>
                       </li>
                     ))}
@@ -179,6 +210,12 @@ class CourseDetailsAdmin extends Component {
             <Col componentClass={ControlLabel} sm={2}>Color</Col>
             <Col sm={10}>
               <ColorPicker className="form-control" color={this.state.course.color || '#36c'} onChange={this.onChangeColor}/>
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={2}>Year</Col>
+            <Col sm={10}>
+              <Select options={this.state.years} value={this.state.course.year || ''} onChange={this.onChangeYear}/>
             </Col>
           </FormGroup>
           <FormGroup>

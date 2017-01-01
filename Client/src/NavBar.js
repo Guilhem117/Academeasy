@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 import {Navbar, Nav, NavItem, Button, Image} from 'react-bootstrap';
 
 import StudentsStore from './Stores/Students';
@@ -10,8 +10,8 @@ class NavBar extends Component {
   constructor(props) {
     super(props);
 
-    this.studentNavigation = ['home', 'courses', 'profile', 'calendar'];
-    this.teacherNavigation = ['home', 'courses', 'profile', 'calendar', 'scan'];
+    this.studentNavigation = ['home', 'courses', 'calendar'];
+    this.teacherNavigation = ['home', 'courses', 'calendar', 'scan'];
     this.adminNavigation = [
       'home',
       'courses',
@@ -100,7 +100,9 @@ class NavBar extends Component {
               width: 'auto',
               height: '50px'
             }} circle/>}
-            {username}
+            {role === 'admin'
+              ? username
+              : <Link to='/profile'>{username}</Link>}
           </Navbar.Text>}
         </Navbar.Collapse>
       </Navbar>

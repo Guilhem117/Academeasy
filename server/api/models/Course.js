@@ -28,6 +28,9 @@ const CourseSchema = new Schema({
     label: {
         type: String
     },
+    year: {
+        type: String
+    },
     color: {
         type: String
     },

@@ -168,7 +168,12 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
 
     busboy.on('finish', () => {
       Course.addAttachments(req.params.courseCode, attachments).then((status) => {
-        res.send(status);
+        if(status && status.ok === 1) {
+          res.send({success: `Attachments added`});
+        }
+        else {
+          next(status);
+        }
       }).catch((err) => {
         next(err);
       });
@@ -194,7 +199,7 @@ router.route('/:courseCode/attachment/:attachmentName').get((req, res, next) => 
 });
 
 router.route('/:courseCode/teachers').get((req, res, next) => {
-  Teacher.find({courses: req.params.courseCode}).select({'_id': 0, '__v': 0}).exec().then((teachers) => {
+  Teacher.find({courses: req.params.courseCode}).select({'_id': 0, '__v': 0, 'avatar': 0}).exec().then((teachers) => {
     res.send(teachers || []);
   }).catch((err) => {
     next(err);

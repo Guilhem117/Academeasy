@@ -1,43 +1,50 @@
 import React, {Component} from 'react';
-import {Grid, Row, Col, Thumbnail} from 'react-bootstrap';
+import {Grid, Panel, Media} from 'react-bootstrap';
 import {Link} from 'react-router';
 
 import CoursesStore from './Stores/Courses';
 
 class CoursesListNonAdmin extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          courses: []
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      courses: [],
+      teachers: {}
+    };
+  }
 
-    componentWillMount() {
-      CoursesStore.getCourses().then((courses) => {
-        this.setState({courses: courses});
+  componentWillMount() {
+    CoursesStore.getCourses().then((courses) => {
+      this.setState({courses});
+      courses.forEach((course) => {
+        CoursesStore.getTeachers(course.code).then((teachersList) => {
+          this.setState((prevState) => {
+            const {teachers} = prevState;
+            teachers[course.code] = teachersList;
+          });
+        });
       });
-    }
+    });
+  }
 
-    render() {
-        return (
-            <Grid>
-                <Row style={{
-                    marginBottom: '15px'
-                }}>
-                  {this.state.courses.map(course => (
-                    <Col xs={6} md={3} key={course.code}>
-                        <Link to={`/course/${course.code}`}>
-                            <Thumbnail src="/Books.jpg">
-                                <p className="text-center">{course.label}</p>
-                            </Thumbnail>
-                        </Link>
-                    </Col>
-
-                  ))}
-                </Row>
-            </Grid>
-        );
-    }
+  render() {
+    return (
+      <Grid className="table-background">
+        <Panel header="Courses list">
+          {(this.state.courses && this.state.courses.length > 0)
+            ? this.state.courses.map(course => (
+              <Media key={course.code}>
+                <Media.Body>
+                  <Media.Heading><Link to={`/course/${course.code}`}>{course.year} - {course.code}</Link> / {course.label}</Media.Heading>
+                  <p>{this.state.teachers[course.code] && this.state.teachers[course.code].map((teacher) => `${teacher.lastName} ${teacher.firstName}`).join(' - ')}</p>
+                </Media.Body>
+              </Media>
+            ))
+            : <h3>No courses</h3>}
+        </Panel>
+      </Grid>
+    );
+  }
 }
 
 export default CoursesListNonAdmin;

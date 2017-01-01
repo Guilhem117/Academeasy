@@ -31,26 +31,25 @@ class StudentDetails extends Component {
 
     componentWillMount = () => {
         const {studentId} = this.props.params;
+        const promises = [
+          CoursesStore.getCourses(),
+          YearsStore.getYears()
+        ]
         if (studentId !== 'new') {
-            StudentsStore.getStudent(studentId).then((student) => {
-                this.setState({student});
-            });
+          promises.push(StudentsStore.getStudent(studentId));
         }
 
-        CoursesStore.getCourses().then((courses) => {
-            this.setState({
-                courses: courses.map((course) => {
-                    return {label: course.label, value: course.code};
-                })
-            });
-        });
-
-        YearsStore.getYears().then((years) => {
-            this.setState({
-                years: years.map((year) => {
-                    return {label: year.label, value: year.code};
-                })
-            });
+        Promise.all(promises).then((values)=> {
+          const [courses, years, student] = values;
+          this.setState({
+              courses: courses.map((course) => {
+                  return {label: course.label, value: course.code};
+              }),
+              years: years.map((year) => {
+                  return {label: year.label, value: year.code};
+              }),
+              student: student || {}
+          });
         });
 
     }
