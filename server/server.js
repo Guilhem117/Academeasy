@@ -28,7 +28,7 @@ app.set('trust proxy', 1);
 
 // configure app to use bodyParser()
 // Only json parser is needed here
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '2mb'}));
 app.use(logger('dev'));
 app.use(cookieSession({
     name: 'session',
@@ -48,12 +48,14 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.use(express.static('./static'));
+
 // API routes
 app.use('/api', require('./api/api'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 });

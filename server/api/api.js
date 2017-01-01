@@ -4,15 +4,15 @@ const router = express.Router();
 
 // Check if user is connected => required for the API
 router.use((req, res, next) => {
-    const {path, method} = req;
-    const {role, username} = req.session;
-    if (method === 'OPTIONS' || path === '/users/login' || (role && username)) {
-        next();
-    } else {
-        const err = new Error('Must be connected');
-        err.status = 401;
-        next(err);
-    }
+  const {path, method} = req;
+  const {role, username} = req.session;
+  if (method === 'OPTIONS' || path === '/users/login' || (role && username)) {
+    next();
+  } else {
+    const err = new Error('Must be connected');
+    err.status = 401;
+    next(err);
+  }
 });
 
 // All PI routes
@@ -26,9 +26,9 @@ router.use('/announcements', require('./routes/announcements'));
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
-    var err = new Error('Api Not Found');
-    err.status = 404;
-    next(err);
+  const err = new Error('Api Not Found');
+  err.status = 404;
+  next(err);
 });
 
 module.exports = router;

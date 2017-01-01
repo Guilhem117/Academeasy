@@ -80,7 +80,7 @@ class Timetable extends Component {
             return c.code === entry.course;
         });
 
-        return course.code;
+        return course && course.code;
     }
 
     onSelectSlot = (slotInfo) => {

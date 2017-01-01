@@ -8,125 +8,141 @@ const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 
 router.route('/').get((req, res, next) => {
-    const {course, count} = req.query;
-    const {role, username} = req.session;
-    const limit = parseInt(count, 10);
+  const {course, count} = req.query;
+  const {role, username} = req.session;
+  const limit = parseInt(count, 10);
 
-    if (role !== 'admin') {
-        let model = null;
-        switch (role) {
-            case 'teacher':
-                model = Teacher;
-                break;
-            case 'student':
-                model = Student;
-                break;
-        }
+  if (role !== 'admin') {
+    let model = null;
+    switch (role) {
+      case 'teacher':
+        model = Teacher;
+        break;
+      case 'student':
+        model = Student;
+        break;
+    }
 
-        model.findOne({username}).exec().then((user) => {
-            if (user && (!course || user.courses.includes(course))) {
-                const query = Calendar.find();
-                if (course) {
-                    query.where({course});
-                } else {
-                    query.where({
-                        course: {
-                            $in: user.courses
-                        }
-                    });
-                }
-                if (limit) {
-                    query.where({
-                        start: {
-                            $gte: new Date()
-                        }
-                    }).limit(limit);
-                }
-                return query.select({'_id': 0, '__v': 0}).exec();
-            }
-
-            return Promise.resolve([]);
-        }).then((events) => {
-            res.send(events);
-        }).catch((err) => {
-            next(err);
-        });
-    } else {
+    model.findOne({username}).exec().then((user) => {
+      if (user && (!course || user.courses.includes(course))) {
         const query = Calendar.find();
         if (course) {
-            query.where({course});
+          query.where({course});
+        } else {
+          query.where({
+            course: {
+              $in: user.courses
+            }
+          });
         }
         if (limit) {
-            query.where({
-                start: {
-                    $gte: new Date()
-                }
-            }).limit(limit);
+          query.where({
+            start: {
+              $gte: new Date()
+            }
+          }).limit(limit);
         }
-        query.select({'_id': 0, '__v': 0}).exec().then((events) => {
-            res.send(events);
-        }).catch((err) => {
-            next(err);
-        });
-    }
-}).post((req, res, next) => {
-    if (req.session.role !== 'admin') {
-        const err = new Error('Admin role required');
-        err.status = 401;
-        next(err);
-        return;
-    }
+        return query.select({'_id': 0, '__v': 0}).exec();
+      }
 
-    if (!req.body.course) {
-        const err = new Error('Invalid arguments');
-        err.status = 400;
-        next(err);
-        return;
-    }
-
-    req.body.id = uuid.v4();
-
-    Calendar.create(req.body).then(_ => {
-        res.send({success: 'Calendar entry created'});
+      return Promise.resolve([]);
+    }).then((events) => {
+      res.send(events);
     }).catch((err) => {
-        next(err);
+      next(err);
     });
+  } else {
+    const query = Calendar.find();
+    if (course) {
+      query.where({course});
+    }
+    if (limit) {
+      query.where({
+        start: {
+          $gte: new Date()
+        }
+      }).limit(limit);
+    }
+    query.select({'_id': 0, '__v': 0}).exec().then((events) => {
+      res.send(events);
+    }).catch((err) => {
+      next(err);
+    });
+  }
+}).post((req, res, next) => {
+  if (req.session.role !== 'admin') {
+    const err = new Error('Admin role required');
+    err.status = 401;
+    next(err);
+    return;
+  }
+
+  if (!req.body.course) {
+    const err = new Error('Invalid arguments');
+    err.status = 400;
+    next(err);
+    return;
+  }
+
+  req.body.id = uuid.v4();
+
+  Calendar.create(req.body).then(_ => {
+    res.send({success: 'Calendar entry created'});
+  }).catch((err) => {
+    next(err);
+  });
 
 });
 
 router.route('/:entryId').get((req, res, next) => {
-    Calendar.findOne({id: req.params.entryId}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
-        res.send(entry);
-    }).catch((err) => {
-        next(err);
-    });
+  Calendar.findOne({id: req.params.entryId}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
+    res.send(entry);
+  }).catch((err) => {
+    next(err);
+  });
 
 }).put((req, res, next) => {
-    if (req.session.role !== 'admin') {
-        res.status(401);
-        res.send('Admin role required');
-        return;
-    }
+  if (req.session.role !== 'admin') {
+    const err = new Error(`Admin role required`);
+    err.status = 401;
+    next(err);
+    return;
+  }
 
-    if (!(req.body.course && req.body.start && req.body.end)) {
-        res.status(400);
-        res.send('Invalid arguments');
-        return;
-    }
+  if (!(req.body.course && req.body.start && req.body.end)) {
+    const err = new Error(`Invalid arguments`);
+    err.status = 401;
+    next(err);
+    return;
+  }
 
-    Calendar.findOneAndUpdate({
-        id: req.params.entryId
-    }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
-        if (entry && entry.id) {
-            res.send({success: `${entry.id} modified`});
-        } else {
-            const err = new Error(`${entry.id} not found`);
-            err.status = 400;
-            next(err);
-        }
-    }).catch((err) => {
-        next(err);
-    });
+  Calendar.findOneAndUpdate({
+    id: req.params.entryId
+  }, req.body, {new: true}).select({'_id': 0, '__v': 0}).exec().then((entry) => {
+    if (entry && entry.id) {
+      res.send({success: `Entry modified`});
+    } else {
+      const err = new Error(`Entry ${entry.id} not found`);
+      err.status = 400;
+      next(err);
+    }
+  }).catch((err) => {
+    next(err);
+  });
+
+}).delete((req, res, next) => {
+  if (req.session.role !== 'admin') {
+    const err = new Error(`Admin role required`);
+    err.status = 401;
+    next(err);
+    return;
+  }
+
+  Calendar.remove({id: req.params.entryId}).exec().then(_ => {
+    res.send({success: 'Entry removed'});
+  }).catch((err) => {
+    next(err);
+  });
 
 });
 
