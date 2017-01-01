@@ -129,7 +129,22 @@ const CalendarStore = {
     });
 
     return fetch(request).then(responseHandler, errorHandler);
-  }
+  },
+
+  updateAttendents: (entryId, attendents) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    const request = new Request(`http://localhost:8081/api/calendar/${entryId}/attendents`, {
+      credentials: 'include',
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({attendents})
+    });
+
+    return fetch(request).then(responseHandler, errorHandler);
+  },
 }
 
 export default CalendarStore;

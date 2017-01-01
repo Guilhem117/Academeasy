@@ -43,9 +43,9 @@ router.route('/').get((req, res, next) => {
           }).limit(limit);
         }
         return query.select({'_id': 0, '__v': 0}).exec();
+      } else {
+        return [];
       }
-
-      return Promise.resolve([]);
     }).then((events) => {
       res.send(events);
     }).catch((err) => {
@@ -144,6 +144,55 @@ router.route('/:entryId').get((req, res, next) => {
     next(err);
   });
 
+});
+
+router.route('/:entryId/attendents').put((req, res, next) => {
+  const {username, role} = req.session;
+  const {entryId} = req.params;
+  const {attendents} = req.body
+
+  if (!Array.isArray(attendents)) {
+    const err = new Error('Invalid arguments');
+    err.status = 400;
+    next(err);
+    return;
+  }
+
+  new Promise((resolve, reject) => {
+    Calendar.findOne({id: entryId}).exec().then((entry) => {
+      if (entry) {
+        const {course} = entry;
+        switch (role) {
+          case 'admin':
+            resolve();
+            break;
+          case 'teacher':
+            Teacher.findOne({username}).exec().then((teacher) => {
+              if (teacher && teacher.courses.includes(course)) {
+                resolve();
+              } else {
+                reject('Must be admin or the teacher of the course');
+              }
+            });
+            break;
+          default:
+            reject('Must be admin or the teacher of the course');
+        }
+      } else {
+        next();
+      }
+    });
+  }).then(_ => {
+    return Calendar.update({
+      id: entryId
+    }, {$set: {
+        attendents
+      }}).exec();
+  }).then(_ => {
+    res.send({success: 'Students list updated'});
+  }).catch((err) => {
+    next(err);
+  });
 });
 
 module.exports = router;
