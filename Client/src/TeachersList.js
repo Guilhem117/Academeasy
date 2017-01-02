@@ -82,7 +82,9 @@ class TeachersList extends Component {
   render() {
     return (
       <Grid className="table-background">
-        <Panel header="Teachers list">
+        <Panel header={(
+          <h3>Teachers</h3>
+        )}>
           <Row>
 
             <BootstrapTable data={this.state.teachers} options={{

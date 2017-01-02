@@ -15,14 +15,12 @@ class CoursesListNonAdmin extends Component {
 
   componentWillMount() {
     CoursesStore.getCourses().then((courses) => {
-      this.setState({courses});
-      courses.forEach((course) => {
-        CoursesStore.getTeachers(course.code).then((teachersList) => {
-          this.setState((prevState) => {
-            const {teachers} = prevState;
-            teachers[course.code] = teachersList;
-          });
+      Promise.all(courses.map((course) => CoursesStore.getTeachers(course.code))).then((teachersLists) => {
+        const teachers = {};
+        teachersLists.forEach((teachersList, idx) => {
+          teachers[courses[idx].code] = teachersList;
         });
+        this.setState({courses, teachers});
       });
     });
   }
@@ -31,16 +29,35 @@ class CoursesListNonAdmin extends Component {
     return <Link key={teacher.username} to={`/teacher/${teacher.username}`}>{`${teacher.lastName} ${teacher.firstName}`}</Link>;
   }
 
+  teacherLinkReducer = (acc, next, idx, array) => {
+    const separator = (
+      <span key={array.length + idx}> - </span>
+    );
+    const value = Array.isArray(acc)
+      ? acc
+      : [acc, separator];
+    value.push(next);
+    if (idx < array.length - 1) {
+      value.push(separator);
+    }
+    return value;
+  }
+
   render() {
     return (
       <Grid className="table-background">
-        <Panel header="Courses list">
+        <Panel header={(
+          <h3>Courses</h3>
+        )}>
           {(this.state.courses && this.state.courses.length > 0)
             ? this.state.courses.map(course => (
               <Media key={course.code}>
                 <Media.Body>
-                  <Media.Heading><Link to={`/course/${course.code}`}>{course.year} - {course.code}</Link> / {course.label}</Media.Heading>
-                  <p>{this.state.teachers[course.code] && this.state.teachers[course.code].map(this.teacherLink)}</p>
+                  <Media.Heading>
+                    <Link to={`/course/${course.code}`}>{course.year}
+                      - {course.code}</Link>
+                    / {course.label}</Media.Heading>
+                  <p>{this.state.teachers[course.code] && this.state.teachers[course.code].map(this.teacherLink).reduce(this.teacherLinkReducer)}</p>
                 </Media.Body>
               </Media>
             ))

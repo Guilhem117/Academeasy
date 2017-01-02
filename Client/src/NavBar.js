@@ -89,6 +89,7 @@ class NavBar extends Component {
               padding: '7px'
             }} src="/logo.png" role="presentation"/>
           </Navbar.Brand>
+          <Navbar.Toggle/>
         </Navbar.Header>
         <Navbar.Collapse>
           {navigation}

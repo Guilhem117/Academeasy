@@ -1,0 +1,9 @@
+.my-calendar {
+    height: 500px;
+}
+
+@media print {
+    .my-calendar {
+        height: 250mm;
+    }
+}

@@ -92,7 +92,9 @@ class StudentsList extends Component {
 
     return (
       <Grid className="table-background">
-        <Panel header="Students list">
+        <Panel header={(
+          <h3>Students</h3>
+        )}>
           <Row>
             <BootstrapTable data={this.state.students} options={{
               onRowClick: this.onRowClick,

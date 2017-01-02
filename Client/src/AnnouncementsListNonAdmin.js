@@ -7,38 +7,29 @@ class AnnouncementsListNonAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      announcements: [],
-      mycourses: true
+      announcements: []
     };
 
   }
 
   componentWillMount() {
-    AnnouncementsStore.getAnnouncements(this.state.mycourses).then((announcements) => {
+    AnnouncementsStore.getAnnouncements().then((announcements) => {
       this.setState({announcements});
     });
   }
 
   componentWillReceiveProps() {
-    AnnouncementsStore.getAnnouncements(this.state.mycourses).then((announcements) => {
+    AnnouncementsStore.getAnnouncements().then((announcements) => {
       this.setState({announcements});
-    });
-  }
-
-  onChangeMyCourses = (event) => {
-    const {checked} = event.target;
-    AnnouncementsStore.getAnnouncements(checked).then((announcements) => {
-      this.setState({announcements, mycourses: checked});
     });
   }
 
   render() {
     return (
       <Grid className="table-background">
-        <Panel header="Announcements">
-          <Checkbox checked={this.state.mycourses} onChange={this.onChangeMyCourses}>
-            Only for my courses
-          </Checkbox>
+        <Panel header={(
+          <h3>Announcements</h3>
+        )}>
           {(this.state.announcements && this.state.announcements.length > 0)
             ? <ListGroup>
                 {this.state.announcements.map((announcement) => {

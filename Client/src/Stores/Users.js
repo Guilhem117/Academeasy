@@ -36,12 +36,16 @@ const errorHandler = (err) => {
 }
 
 const UsersStore = {
-  getAdmins: _ => {
+  getAdmins: (search) => {
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
 
-    const request = new Request('http://localhost:8081/api/users/admins', {
+    const url = search
+      ? `http://localhost:8081/api/users/admins?search=${search}`
+      : 'http://localhost:8081/api/users/admins';
+
+    const request = new Request(url, {
       credentials: 'include',
       method: 'GET',
       headers: headers
@@ -89,6 +93,20 @@ const UsersStore = {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(admin)
+    });
+
+    return fetch(request).then(responseHandler, errorHandler);
+  },
+
+  removeAdmin: (username) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    const request = new Request(`http://localhost:8081/api/users/admins/${username}`, {
+      credentials: 'include',
+      method: 'DELETE',
+      headers: headers
     });
 
     return fetch(request).then(responseHandler, errorHandler);

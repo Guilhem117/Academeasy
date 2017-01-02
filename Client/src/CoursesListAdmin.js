@@ -82,7 +82,9 @@ class CoursesListAdmin extends Component {
   render() {
     return (
       <Grid className="table-background">
-        <Panel header="Courses list">
+        <Panel header={(
+          <h3>Courses</h3>
+        )}>
           <Row>
             <BootstrapTable data={this.state.courses} options={{
               onRowClick: this.onRowClick,

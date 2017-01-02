@@ -112,6 +112,35 @@ const TeachersStore = {
     return fetch(request).then(responseHandler, errorHandler);
   },
 
+  newPassword: (username) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    const request = new Request(`http://localhost:8081/api/teachers/${username}/newpassword`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: headers
+    });
+
+    return fetch(request).then(responseHandler, errorHandler);
+  },
+
+  changePassword: (username, password, currentpassword) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    const request = new Request(`http://localhost:8081/api/teachers/${username}/newpassword`, {
+      credentials: 'include',
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({password, currentpassword})
+    });
+
+    return fetch(request).then(responseHandler, errorHandler);
+  },
+
   getAvatarURL: (username) => {
     return `http://localhost:8081/api/teachers/${username}/avatar`;
   }

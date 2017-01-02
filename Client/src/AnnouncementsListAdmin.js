@@ -84,7 +84,9 @@ class AnnouncementsListAdmin extends Component {
   render() {
     return (
       <Grid className="table-background">
-        <Panel header="Announcements list">
+        <Panel header={(
+          <h3>Announcements</h3>
+        )}>
           <Row>
             <BootstrapTable data={this.state.announcements} options={{
               onRowClick: this.onRowClick,

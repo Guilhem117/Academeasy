@@ -34,6 +34,8 @@ router.route('/').get((req, res, next) => {
     return;
   }
 
+  req.body.username = req.body.username && req.body.username.toLowerCase();
+
   if (!req.body.username) {
     const err = new Error('Invalid arguments');
     err.status = 400;
@@ -96,7 +98,7 @@ router.route('/:username').get((req, res, next) => {
   Student.remove({username: req.params.username}).exec().then(_ => {
     return User.remove({username: req.params.username}).exec();
   }).then(_ => {
-    res.send({success: 'Course removed'});
+    res.send({success: 'Student removed'});
   }).catch((err) => {
     next(err);
   });

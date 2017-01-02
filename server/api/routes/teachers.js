@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const generatePassword = require('password-generator');
 
 const Teacher = require('../models/Teacher');
 const User = require('../models/User');
@@ -34,6 +35,8 @@ router.route('/').get((req, res, next) => {
     next(err);
     return;
   }
+
+  req.body.username = req.body.username && req.body.username.toLowerCase();
 
   if (!req.body.username) {
     const err = new Error('Invalid arguments');
@@ -110,7 +113,7 @@ router.route('/:username').get((req, res, next) => {
       }, {multi: true}).exec()
     ]);
   }).then(_ => {
-    res.send({success: 'Course removed'});
+    res.send({success: 'Teacher removed'});
   }).catch((err) => {
     next(err);
   });
@@ -135,5 +138,62 @@ router.route('/:username/avatar').get((req, res, next) => {
   });
 
 });
+
+router.route('/:username/newpassword').get((req, res, next) => {
+  if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+    const password = generatePassword();
+    User.findOneAndUpdate({
+      username: req.params.username
+    }, {$set: {
+        password
+      }}).exec().then((student) => {
+      res.send({password});
+    }).catch((err) => {
+      next(err);
+    });
+
+  } else {
+    const err = new Error('Admin role required or update yourself only');
+    err.status = 401;
+    next(err);
+  }
+
+}).put((req, res, next) => {
+  if ((req.session.username && (req.params.username === req.session.username)) || req.session.role === 'admin') {
+    if (!req.body.password) {
+      const err = new Error('Invalid arguments');
+      err.status = 400;
+      next(err);
+      return;
+    }
+    const {password, currentpassword} = req.body;
+    const search = {
+      username: req.params.username
+    };
+    if (req.session.role !== 'admin') {
+      search.password = currentpassword;
+    }
+    User.findOneAndUpdate(search, {$set: {
+        password
+      }}).exec().then((result) => {
+      if (result) {
+        res.send({success: 'Password changed'});
+      } else {
+        const err = new Error('Current password invalid');
+        err.status = 401;
+        next(err);
+      }
+    }).catch((err) => {
+      next(err);
+    });
+
+  } else {
+    const err = new Error('Admin role required or update yourself only');
+    err.status = 401;
+    next(err);
+  }
+
+});
+
 
 module.exports = router;
