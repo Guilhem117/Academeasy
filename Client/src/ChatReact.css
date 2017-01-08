@@ -1,0 +1,82 @@
+.chat {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+}
+
+.chat select {
+  display: inline-block;
+  height: 24px;
+  width: 100px;
+  padding: 0px 2px;
+  border-radius: 0px;
+}
+
+.chat .chat-bar {
+    width: 300px;
+    height: 20px;
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+
+.chat input {
+    display: inline-block;
+    border-width: 1px;
+    border-color: #2c3e50;
+    height: 20px;
+    padding: 0px 5px;
+}
+
+.chat input:focus {
+    border-color: #18bc9c;
+}
+
+.chat .conferance-input {
+    width: 150px;
+}
+
+.chat .message-input {
+    border-radius: 0px;
+    width: 200px;
+}
+
+.chat .message-input:focus {
+    border-color: #18bc9c;
+}
+
+.chat .panel {
+    margin-bottom: 0px;
+}
+
+.chat .panel-body {
+    padding: 5px;
+}
+
+.chat li {
+    padding: 0.5rem;
+    overflow: hidden;
+    display: flex;
+}
+
+.other .msg {
+    order: 1;
+}
+
+.chat .me {
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.me .msg {
+    order: 1;
+}
+
+.msg p {
+    font-size: 12px;
+    margin: 0 0 0.2rem 0;
+}
+
+.msg small {
+    font-size: 9px;
+    float: right;
+}

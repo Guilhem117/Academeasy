@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid, Panel, ListGroup, ListGroupItem, Checkbox} from 'react-bootstrap';
+import {Grid, Panel, ListGroup, ListGroupItem} from 'react-bootstrap';
 
 import AnnouncementsStore from './Stores/Announcements';
 

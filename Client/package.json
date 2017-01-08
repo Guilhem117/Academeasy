@@ -13,6 +13,7 @@
     "react-big-calendar": "^0.11.1",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-table": "^2.7.1",
+    "react-custom-scrollbars": "^4.0.1",
     "react-datetime": "^2.8.1",
     "react-dom": "^15.4.1",
     "react-qr-reader": "^0.3.1",
