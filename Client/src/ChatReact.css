@@ -56,6 +56,7 @@
     padding: 0.5rem;
     overflow: hidden;
     display: flex;
+    width: auto;
 }
 
 .other .msg {
