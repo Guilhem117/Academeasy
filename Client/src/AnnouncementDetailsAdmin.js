@@ -142,7 +142,11 @@ class AnnouncementDetailsAdmin extends Component {
     return (newDate) => {
       this.setState((prevState, props) => {
         const {announcement} = prevState;
-        announcement[which] = newDate.toDate();
+        if (typeof(newDate) === 'string') {
+          announcement[which] = newDate;
+        } else {
+          announcement[which] = newDate.toDate();
+        }
         return {announcement, validation: this.validation(prevState)};
       });
     }
