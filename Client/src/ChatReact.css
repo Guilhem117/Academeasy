@@ -1,8 +1,9 @@
 .chat {
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  right: 10px;
-  z-index: 100;
+  right: 0;
+  margin-right: 10px;
+  z-index: 170;
 }
 
 .chat select {
