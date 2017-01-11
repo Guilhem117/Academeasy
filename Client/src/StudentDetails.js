@@ -181,9 +181,4 @@ class StudentDetails extends Component {
   }
 }
 
-StudentDetails.propTypes = {
-  isNew: React.PropTypes.bool,
-  onSendPassword: React.PropTypes.func
-};
-
 export default withRouter(StudentDetails);

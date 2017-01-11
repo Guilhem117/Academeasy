@@ -25,7 +25,7 @@ class TeacherDetailsNonAdmin extends Component {
         teacher,
         courses: (teacher.courses && courses.map((course) => {
           return courses.find((c) => c.code === course.code).label;
-        }).join(', ')) || []
+        }).join(', ')) || ''
       });
 
     })
@@ -42,7 +42,7 @@ class TeacherDetailsNonAdmin extends Component {
           teacher,
           courses: (teacher.courses && courses.map((course) => {
             return courses.find((c) => c.code === course.code).label;
-          }).join(', ')) || []
+          }).join(', ')) || ''
         });
       });
 

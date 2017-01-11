@@ -28,6 +28,7 @@ class AnnouncementDetailsAdmin extends Component {
       announcement: {},
       teachers: [],
       courses: [],
+      validation: {},
       startDateDisabled: false,
       endDateDisabled: false
     };
@@ -61,7 +62,12 @@ class AnnouncementDetailsAdmin extends Component {
         endDateDisabled: announcement.end < now,
         announcement,
         teachers,
-        courses
+        courses,
+        validation: {
+          text: null,
+          start: null,
+          end: null
+        }
       });
     });
   }
@@ -81,7 +87,25 @@ class AnnouncementDetailsAdmin extends Component {
         const [announcement,
           teachers,
           courses] = values;
-        this.setState({announcement, teachers, courses});
+        const now = new Date();
+        announcement.start = announcement.start
+          ? new Date(announcement.start)
+          : announcement.start;
+        announcement.end = announcement.end
+          ? new Date(announcement.end)
+          : announcement.end;
+        this.setState({
+          startDateDisabled: announcement.start < now,
+          endDateDisabled: announcement.end < now,
+          announcement,
+          teachers,
+          courses,
+          validation: {
+            text: null,
+            start: null,
+            end: null
+          }
+        });
       });
     }
   }
@@ -92,7 +116,7 @@ class AnnouncementDetailsAdmin extends Component {
       this.setState((prevState, props) => {
         const {announcement} = prevState;
         announcement[valueName] = value;
-        return {announcement};
+        return {announcement, validation: this.validation(prevState)};
       });
 
     }
@@ -119,34 +143,70 @@ class AnnouncementDetailsAdmin extends Component {
       this.setState((prevState, props) => {
         const {announcement} = prevState;
         announcement[which] = newDate.toDate();
-        return {announcement};
+        return {announcement, validation: this.validation(prevState)};
       });
     }
   }
 
   onSave = _ => {
     const {announceId} = this.props.params;
+    let promise;
     if (announceId === 'new') {
-      AnnouncementsStore.addAnnounce(this.state.announcement);
+      promise = AnnouncementsStore.addAnnounce(this.state.announcement);
     } else {
-      AnnouncementsStore.updateAnnounce(this.state.announcement);
+      promise = AnnouncementsStore.updateAnnounce(this.state.announcement);
     }
-    this.props.router.push('/announcements');
+
+    if (promise) {
+      promise.then((resp) => {
+        if (resp) {
+          this.props.router.push('/announcements');
+        } else {
+          this.setState((prevState, props) => {
+            return {validation: this.validation(prevState)};
+          });
+        }
+      });
+    }
   }
 
   onCancel = _ => {
     this.props.router.push('/announcements');
   }
 
-  isValidStartDate = () => {
-    const now = new Date();
-    const {start} = this.state.announcement;
-    return this.state.startDateDisabled || start && start.getTime && start.getFullYear() >= now.getFullYear() && start.getMonth() >= now.getMonth() && start.getDate() >= now.getDate();
+  validation = (state) => {
+    const {start, end, text} = state.announcement;
+    return {
+      text: text
+        ? null
+        : "error",
+      start: this.isValidDate('start', start, end)
+        ? null
+        : "error",
+      end: this.isValidDate('end', start, end)
+        ? null
+        : "error"
+    }
   }
 
-  isValidEndDate = () => {
-    const {start, end} = this.state.announcement;
-    return this.state.endDateDisabled || end && end.getTime && (!(start && start.getTime) || end > start);
+  isValidDate = (which, start, end) => {
+    switch (which) {
+      case 'start':
+        return this.isValidStartDate(start, end);
+      case 'end':
+        return this.isValidEndDate(start, end);
+      default:
+        return false;
+    }
+  }
+
+  isValidStartDate = (start, end) => {
+    const now = new Date();
+    return this.state.startDateDisabled || (start && start.getTime && start.getFullYear() >= now.getFullYear() && start.getMonth() >= now.getMonth() && start.getDate() >= now.getDate());
+  }
+
+  isValidEndDate = (start, end) => {
+    return this.state.endDateDisabled || (end && end.getTime && (!(start && start.getTime) || end > start));
   }
 
   render() {
@@ -163,9 +223,7 @@ class AnnouncementDetailsAdmin extends Component {
       return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.username};
     });
 
-    const startDateIsValid = this.isValidStartDate();
-    const endDateIsValid = this.isValidEndDate();
-    const formIsValid = startDateIsValid && endDateIsValid;
+    const formIsValid = !(this.state.validation.text || this.state.validation.start || this.state.validation.end);
 
     return (
       <Grid className="table-background">
@@ -183,15 +241,13 @@ class AnnouncementDetailsAdmin extends Component {
                 <Select multi options={teachers} value={this.state.announcement.teachers || []} onChange={this.onChangeTeachers}/>
               </Col>
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={this.state.validation.text}>
               <Col componentClass={ControlLabel} sm={2}>Text</Col>
               <Col sm={10}>
                 <FormControl type="text" value={this.state.announcement.text || ''} onChange={this.onChange('text')}/>
               </Col>
             </FormGroup>
-            <FormGroup validationState={startDateIsValid
-              ? null
-              : "error"}>
+            <FormGroup validationState={this.state.validation.start}>
               <Col componentClass={ControlLabel} sm={2}>Start</Col>
               <Col sm={10}>
                 <Datetime inputProps={{
@@ -203,9 +259,7 @@ class AnnouncementDetailsAdmin extends Component {
                 }} value={this.state.announcement.start} onChange={this.onChangeDate('start')}/>
               </Col>
             </FormGroup>
-            <FormGroup validationState={endDateIsValid
-              ? null
-              : "error"}>
+            <FormGroup validationState={this.state.validation.end}>
               <Col componentClass={ControlLabel} sm={2}>End</Col>
               <Col sm={10}>
                 <Datetime inputProps={{

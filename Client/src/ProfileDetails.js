@@ -98,13 +98,21 @@ class ProfileDetails extends Component {
 
   onUpdate = _ => {
     const {role} = sessionStorage;
+    let promise;
     switch (role) {
       case 'student':
-        StudentsStore.updateStudent(this.state.profile);
+        promise = StudentsStore.updateStudent(this.state.profile);
         break;
       case 'teacher':
-        TeachersStore.updateTeacher(this.state.profile);
+        promise = TeachersStore.updateTeacher(this.state.profile);
         break;
+    }
+    if (promise) {
+      promise.then((resp) => {
+        if (resp) {
+          location.reload();
+        }
+      });
     }
   }
 
