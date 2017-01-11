@@ -27,7 +27,7 @@ class TeacherDetailsAdmin extends Component {
 
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {teacherId} = this.props.params;
     if (teacherId !== 'new') {
       TeachersStore.getTeacher(teacherId).then((teacher) => {

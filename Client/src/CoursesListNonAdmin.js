@@ -13,7 +13,7 @@ class CoursesListNonAdmin extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     CoursesStore.getCourses().then((courses) => {
       Promise.all(courses.map((course) => CoursesStore.getTeachers(course.code))).then((teachersLists) => {
         const teachers = {};

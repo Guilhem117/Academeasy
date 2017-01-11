@@ -25,7 +25,7 @@ class StudentsList extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Promise.all([YearsStore.getYears(), StudentsStore.getStudents()]).then((values) => {
       const [years,
         students] = values;

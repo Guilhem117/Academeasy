@@ -33,7 +33,7 @@ class CourseDetailsAdmin extends Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {courseCode} = this.props.params;
 
     Promise.all([

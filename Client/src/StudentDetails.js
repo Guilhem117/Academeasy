@@ -29,7 +29,7 @@ class StudentDetails extends Component {
 
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {studentId} = this.props.params;
     const promises = [CoursesStore.getCourses(), YearsStore.getYears()]
     if (studentId !== 'new') {

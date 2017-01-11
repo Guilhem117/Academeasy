@@ -29,7 +29,7 @@ class ProfileDetails extends Component {
 
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {role, username} = sessionStorage;
     switch (role) {
       case 'student':

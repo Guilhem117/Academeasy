@@ -25,7 +25,7 @@ class StudentsScan extends Component {
     }
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {eventId} = this.props.params;
     CalendarStore.getCalendar(20).then((calendarEntries) => {
       let students = [];

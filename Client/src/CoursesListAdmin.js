@@ -22,7 +22,7 @@ class CoursesListAdmin extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     CoursesStore.getCourses().then((courses) => {
       this.setState({courses});
     });

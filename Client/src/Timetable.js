@@ -23,7 +23,7 @@ class Timetable extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Promise.all([CoursesStore.getCourses(), CalendarStore.getCalendar()]).then((values) => {
       const [courses,
         events] = values;

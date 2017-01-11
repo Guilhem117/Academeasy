@@ -12,7 +12,7 @@ class AnnouncementsListNonAdmin extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     AnnouncementsStore.getAnnouncements().then((announcements) => {
       this.setState({announcements});
     });
@@ -36,7 +36,8 @@ class AnnouncementsListNonAdmin extends Component {
                   const {courses} = announcement;
                   return (
                     <ListGroupItem key={announcement.id}>
-                      <strong>{courses.join(', ')}</strong>: {announcement.text}
+                      {courses && courses.length > 0 && (<strong>{courses.join(', ')}:&nbsp;</strong>)}
+                      {announcement.text}
                     </ListGroupItem>
                   );
                 })}

@@ -28,7 +28,7 @@ class CourseDetailsNonAdmin extends Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const {courseCode} = this.props.params;
         Promise.all([
             CoursesStore.getCourse(courseCode),

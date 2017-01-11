@@ -27,7 +27,7 @@ class TimetableEdit extends Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {entryId} = this.props;
     Promise.all([
       entryId === 'new'
@@ -49,6 +49,7 @@ class TimetableEdit extends Component {
       entry.end = entry.end
         ? new Date(entry.end)
         : '';
+
       this.setState({entry, courses, teachers});
     });
   }
@@ -100,7 +101,7 @@ class TimetableEdit extends Component {
           entry[which] = newDate;
         } else {
           entry[which] = newDate.toDate();
-          if (!(entry.end && entry.end.getTime) || (entry.start && entry.start.getTime && entry.start.getTime() > entry.end.getTime())) {
+          if (!(entry.end && entry.end.getTime) || (entry.start && entry.start.getTime && entry.start > entry.end)) {
             entry.end = entry.start;
           }
         }
@@ -132,9 +133,15 @@ class TimetableEdit extends Component {
     this.props.router.push('/calendar');
   }
 
-  isValidEntry = _ => {
-    const {course, start, end} = this.state.entry;
-    return course && start && start.getTime && end && end.getTime;
+  isValidStartDate = () => {
+    const now = new Date();
+    const {start} = this.state.entry;
+    return start && start.getTime && start.getFullYear() >= now.getFullYear() && start.getMonth() >= now.getMonth() && start.getDate() >= now.getDate();
+  }
+
+  isValidEndDate = () => {
+    const {start, end} = this.state.entry;
+    return end && end.getTime && (!(start && start.getTime) || end > start);
   }
 
   render() {
@@ -150,6 +157,13 @@ class TimetableEdit extends Component {
       return {label: `${teacher.lastName} ${teacher.firstName}`, value: teacher.username};
     });
 
+    const {course, start, end} = this.state.entry;
+
+    const startDateIsValid = this.isValidStartDate();
+    const endDateIsValid = this.isValidEndDate();
+
+    const formIsValid = course && startDateIsValid && endDateIsValid;
+
     return (
       <Modal.Dialog>
         <Modal.Header>
@@ -160,7 +174,7 @@ class TimetableEdit extends Component {
 
         <Modal.Body>
           <Form horizontal>
-            <FormGroup>
+            <FormGroup validationState={this.state.entry.course ? null : "error"}>
               <Col componentClass={ControlLabel} sm={2}>
                 Course
               </Col>
@@ -178,7 +192,9 @@ class TimetableEdit extends Component {
               </Col>
             </FormGroup>
 
-            <FormGroup>
+            <FormGroup validationState={startDateIsValid
+              ? null
+              : "error"}>
               <Col componentClass={ControlLabel} sm={2}>
                 Start
               </Col>
@@ -190,7 +206,9 @@ class TimetableEdit extends Component {
                 }} value={this.state.entry.start} onChange={this.onDateChange('start')}/>
               </Col>
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={endDateIsValid
+              ? null
+              : "error"}>
               <Col componentClass={ControlLabel} sm={2}>
                 End
               </Col>
@@ -205,7 +223,7 @@ class TimetableEdit extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.onSave} disabled={!this.isValidEntry()}>Save</Button>
+          <Button onClick={this.onSave} disabled={!formIsValid}>Save</Button>
           {entryId !== 'new' && <Button onClick={this.onDelete}>Delete</Button>}
           <Button onClick={this.onCancel}>Cancel</Button>
         </Modal.Footer>

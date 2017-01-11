@@ -16,7 +16,7 @@ class TeacherDetailsNonAdmin extends Component {
 
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {teacherId} = this.props.params;
     Promise.all([TeachersStore.getTeacher(teacherId), CoursesStore.getCourses()]).then((values) => {
       const [teacher,
