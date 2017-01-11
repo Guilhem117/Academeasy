@@ -17,12 +17,15 @@ router.route('/').get((req, res, next) => {
     if (course) {
       query.where({courses: course});
     }
-    if (limit) {
+    if (role !== 'admin') {
       query.where({
         end: {
           $gte: new Date()
         }
-      }).limit(limit);
+      });
+    }
+    if (limit) {
+      query.limit(limit);
     }
     query.select({'_id': 0, '__v': 0}).sort({start: -1}).exec().then((announcements) => {
       res.send(announcements);
