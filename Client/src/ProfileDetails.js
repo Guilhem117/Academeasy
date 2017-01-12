@@ -129,7 +129,7 @@ class ProfileDetails extends Component {
                 <FormGroup>
                   <Col componentClass={ControlLabel} sm={3}>Username</Col>
                   <Col sm={9}>
-                    <FormControl type="text" onChange={this.onChange('username')} value={this.state.profile.username || ''}/>
+                    <FormControl type="text" disabled onChange={this.onChange('username')} value={this.state.profile.username || ''}/>
                   </Col>
                 </FormGroup>
                 <FormGroup>

@@ -162,6 +162,21 @@ const CoursesStore = {
     return fetch(request).then(responseHandler, errorHandler);
   },
 
+  removeAttachments: (courseCode, files) => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    const request = new Request(`http://localhost:8081/api/courses/${courseCode}/attachment`, {
+      credentials: 'include',
+      method: 'DELETE',
+      headers: headers,
+      body: JSON.stringify({files})
+    });
+
+    return fetch(request).then(responseHandler, errorHandler);
+  },
+
   getAttachmentURL: (courseCode, fileName) => {
     return `http://localhost:8081/api/courses/${courseCode}/attachment/${fileName}`;
   }

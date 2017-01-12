@@ -121,7 +121,7 @@ class StudentsScan extends Component {
                 <TableHeaderColumn dataField='course'>Course</TableHeaderColumn>
                 <TableHeaderColumn dataField='teacher'>Teacher</TableHeaderColumn>
                 <TableHeaderColumn dataField='start' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>Start</TableHeaderColumn>
-                <TableHeaderColumn dataField='end' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>Start</TableHeaderColumn>
+                <TableHeaderColumn dataField='end' dataFormat={(cell) => moment(cell).format('MMM Do hh:mm a')}>End</TableHeaderColumn>
               </BootstrapTable>
             </Row>
           </Panel>
