@@ -251,9 +251,9 @@ class ChatReact extends Component {
   generateTabChat = (tab) => {
     return <Tab key={tab.conferance} eventKey={tab.conferance} title={tab.titre}>
       <Well>
-        connected user: {this.state.isLeader && tab.leader
+        connected user:{this.generateSelectListUsers(tab.utilisateur)}
+        {this.state.isLeader && tab.leader
           ? <div>
-              {this.generateSelectListUsers(tab.utilisateur)}
               <Button bsSize="xsmall" bsStyle="link" onClick={this.onRemoveUserConf(tab.conferance)}>
                 remove user
               </Button>
@@ -303,7 +303,10 @@ class ChatReact extends Component {
   }
 
   generateSelectListUsers = (users) => {
-    return <FormControl componentClass="select" value={this.state.value} onChange={this.onChange("selectedUser")}>{users.map(this.generateOptionUser)}</FormControl>;
+    return <FormControl componentClass="select" value={this.state.value} onChange={this.onChange("selectedUser")}>
+    <option>All user</option>;
+    {users.map(this.generateOptionUser)}
+    </FormControl>;
   }
 
   generateOptionUser = (user) => {
@@ -311,7 +314,9 @@ class ChatReact extends Component {
   }
 
   generateUlListUsers = (users) => {
-    return <ul>{users.map(this.generateLiUser)}</ul>;
+    return <ul>
+    {users.map(this.generateLiUser)}
+    </ul>;
   }
 
   generateLiUser = (user) => {
