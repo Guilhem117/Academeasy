@@ -52,10 +52,10 @@ class NavBar extends Component {
   logout = () => {
     UsersStore.logoutUser(sessionStorage.username).then(_ => {
       sessionStorage.clear();
-      location.reload();
+      this.props.router.replace('/login');
     }).catch(_ => {
       sessionStorage.clear();
-      location.reload();
+      this.props.router.replace('/login');
     });
   }
 

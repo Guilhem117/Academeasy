@@ -330,7 +330,7 @@ class ChatReact extends Component {
     </div>;
 
     return (
-      <div className="chat">
+      <div className="chat no-print">
         {this.state.isConnected && <Panel header={chatBar} bsStyle="primary" style={{
           width: '300px'
         }} collapsible expanded={this.state.isVisible}>
