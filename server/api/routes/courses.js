@@ -208,6 +208,49 @@ router.route('/:courseCode/attachment').post((req, res, next) => {
     error.status = 401;
     next(error);
   });
+}).delete((req, res, next) => {
+  new Promise((resolve, reject) => {
+    const {role, username} = req.session;
+    const {courseCode} = req.params;
+    switch (role) {
+      case 'admin':
+        resolve();
+        break;
+      case 'teacher':
+        Teacher.findOne({username, courses: courseCode}).exec().then((teacher) => {
+          if (teacher) {
+            resolve();
+          } else {
+            reject('This is not you course');
+          }
+        });
+        break;
+      default:
+        reject('Only admins and teachers can delete attachments');
+    }
+  }).then(_ => {
+    const {files} = req.body;
+    const {courseCode} = req.params;
+    Course.update({
+      code: courseCode
+    }, {
+      $pull: {
+        attachments: {
+          name: {
+            $in: files
+          }
+        }
+      }
+    }).exec().then(_ => {
+      res.sendStatus(204);
+    }).catch((err) => {
+      next(err);
+    });
+  }).catch((err) => {
+    const error = new Error(err);
+    error.status = 401;
+    next(error);
+  });
 });
 
 router.route('/:courseCode/attachment/:attachmentName').get((req, res, next) => {

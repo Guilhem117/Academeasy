@@ -29,7 +29,7 @@ class CourseDetailsAdmin extends Component {
       selectedTeachers: [],
       teachers: [],
       years: [],
-      files: undefined
+      filesToRemove: []
     };
   }
 
@@ -145,6 +145,9 @@ class CourseDetailsAdmin extends Component {
       if (this.state.files && this.state.files.length > 0) {
         promises.push(CoursesStore.addAttachments(this.state.course.code, this.state.files));
       }
+      if (this.state.filesToRemove && this.state.filesToRemove.length > 0) {
+        promises.push(CoursesStore.removeAttachments(courseCode, this.state.filesToRemove));
+      }
 
       Promise.all(promises).then(_ => {
         this.props.router.push('/courses');
@@ -153,12 +156,42 @@ class CourseDetailsAdmin extends Component {
 
   }
 
+  removeAttachement = (fileName) => {
+    return (event) => {
+      this.setState((prevState, props) => {
+        const {filesToRemove} = prevState;
+        if (filesToRemove.indexOf(fileName) === -1) {
+          filesToRemove.push(fileName);
+        }
+        return {filesToRemove};
+      });
+    }
+  }
+
   onCancel = _ => {
     this.props.router.push('/courses');
   }
 
   getAttachmentURL = (filename) => {
     return CoursesStore.getAttachmentURL(this.state.course.code, filename);
+  }
+
+  filesList = _ => {
+    const {attachments} = this.state.course;
+    const {filesToRemove} = this.state;
+    return (attachments.filter((file) => filesToRemove.indexOf(file.name) === -1).map((file, idx) => (
+      <li key={idx}>
+        <p>
+          <a href={this.getAttachmentURL(file.name)}>{file.name}</a>
+          <Button bsClass="close" style={{
+            display: 'inline-block',
+            color: '#000'
+          }} onClick={this.removeAttachement(file.name)}>
+            <span>x</span>
+          </Button>
+        </p>
+      </li>
+    )));
   }
 
   render() {
@@ -197,12 +230,7 @@ class CourseDetailsAdmin extends Component {
                   </Well>
                 : null}
               {this.state.course.attachments
-                ? <ul>{this.state.course.attachments.map((file, idx) => (
-                      <li key={idx}>
-                        <a href={this.getAttachmentURL(file.name)}>{file.name}</a>
-                      </li>
-                    ))}
-                  </ul>
+                ? <ul>{this.filesList()}</ul>
                 : null}
             </Col>
           </FormGroup>
